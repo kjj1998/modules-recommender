@@ -1,0 +1,56 @@
+package com.example.modulesrecommender.services;
+
+import com.example.modulesrecommender.exceptions.CustomErrorException;
+import com.example.modulesrecommender.models.module.Module;
+import com.example.modulesrecommender.models.student.CreateStudentDTO;
+import com.example.modulesrecommender.models.student.ReadStudentDTO;
+import com.example.modulesrecommender.repositories.ModuleRepository;
+import com.example.modulesrecommender.repositories.StudentRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class StudentService {
+    private final StudentRepository studentRepository;
+    private final ModuleRepository moduleRepository;
+
+    public StudentService(StudentRepository studentRepository, ModuleRepository moduleRepository) {
+        this.studentRepository = studentRepository;
+        this.moduleRepository = moduleRepository;
+    }
+
+    public ReadStudentDTO createStudent(CreateStudentDTO createStudentDTO) {
+        if (studentRepository.existsById(createStudentDTO.getStudentId())) {
+            throw new CustomErrorException(
+                    HttpStatus.BAD_REQUEST,
+                    "Student with id " + createStudentDTO.getStudentId() + " already exists!");
+        }
+
+        List<String> courseCodes = createStudentDTO.getCourseCode();
+        List<Module> modulesTaken = new ArrayList<>();
+
+        for (String courseCode : courseCodes) {
+            Optional<Module> module = moduleRepository.findById(courseCode);
+            module.ifPresent(modulesTaken::add);
+        }
+
+        if (modulesTaken.size() != courseCodes.size()) {
+            throw new CustomErrorException(
+                    HttpStatus.BAD_REQUEST,
+                    "Some of the course codes entered are invalid!");
+        }
+
+        ReadStudentDTO student = new ReadStudentDTO(
+                createStudentDTO.getStudentId(),
+                createStudentDTO.getMajor(),
+                createStudentDTO.getName(),
+                createStudentDTO.getYearOfStudy(),
+                modulesTaken);
+
+        return studentRepository.save(student);
+    }
+}

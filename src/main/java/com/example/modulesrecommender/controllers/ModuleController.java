@@ -1,6 +1,6 @@
 package com.example.modulesrecommender.controllers;
 
-import com.example.modulesrecommender.models.Module;
+import com.example.modulesrecommender.models.module.Module;
 import com.example.modulesrecommender.repositories.ModuleRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
