@@ -92,4 +92,19 @@ public class StudentService {
         return studentRepository.save(retrievedStudent);
     }
 
+    public void deleteStudent(String studentId) {
+        if (!studentRepository.existsById(studentId)) {
+            throw new CustomErrorException(
+                    HttpStatus.BAD_REQUEST,
+                    "Student with id " + studentId + " does not exist!");
+        }
+
+        studentRepository.deleteById(studentId);
+
+        if (studentRepository.findById(studentId).isPresent()) {
+            throw new CustomErrorException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Student with id " + studentId + " was not deleted successfully!");
+        }
+    }
 }

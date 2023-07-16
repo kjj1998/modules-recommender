@@ -75,4 +75,24 @@ public class StudentController {
                 HttpStatus.OK
         );
     }
+
+    /**
+     * DELETE request to delete a student
+     * @param studentId the id of the student to be deleted
+     * @return the response object containing the status code
+     * @since 1.0
+     */
+    @DeleteMapping("/{studentId}")
+    ResponseEntity<HttpResponse> deleteStudent(@PathVariable String studentId) {
+        studentService.deleteStudent(studentId);
+
+        return new ResponseEntity<>(
+                new HttpResponse(
+                        HttpStatus.OK,
+                        "Student with id " + studentId + " is deleted.",
+                        null
+                ),
+                HttpStatus.OK
+        );
+    }
 }
