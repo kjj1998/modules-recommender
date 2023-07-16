@@ -35,19 +35,35 @@ public class StudentController {
         return student.orElse(null);
     }
 
+    /**
+     * POST request to create a new student in the database
+     * @param createStudentDTO DTO containing details of student to be created
+     * @return the response object containing the status code and created student object
+     * @since 1.0
+     */
     @PostMapping("/create")
     ResponseEntity<HttpResponse> createStudent(@RequestBody CreateStudentDTO createStudentDTO) {
+        try {
+            ReadStudentDTO createdStudent = studentService.createStudent(createStudentDTO);
 
-        ReadStudentDTO createdStudent = studentService.createStudent(createStudentDTO);
-
-        return new ResponseEntity<>(
-                new HttpResponse(
-                        HttpStatus.CREATED,
-                        "Student with id " + createdStudent.getStudentId() + " created.",
-                        createdStudent
-                ),
-                HttpStatus.CREATED
-        );
+            return new ResponseEntity<>(
+                    new HttpResponse(
+                            HttpStatus.CREATED,
+                            "Student with id " + createdStudent.getStudentId() + " created.",
+                            createdStudent
+                    ),
+                    HttpStatus.CREATED
+            );
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                    new HttpResponse(
+                            HttpStatus.INTERNAL_SERVER_ERROR,
+                            "Internal Server Error",
+                            null
+                    ),
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
     }
 
     /**
