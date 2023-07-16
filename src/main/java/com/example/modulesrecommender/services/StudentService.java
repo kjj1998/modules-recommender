@@ -53,4 +53,43 @@ public class StudentService {
 
         return studentRepository.save(student);
     }
+
+    /**
+     * Update the student details except for studentId which is unique and fixed upon account creation
+     *
+     * @param modifyStudentDTO the data transfer object containing the updated details of the student
+     * @return the student object containing the updated details
+     * @since 1.0
+     */
+    public ReadStudentDTO updateStudent(CreateStudentDTO modifyStudentDTO) {
+        if (!studentRepository.existsById(modifyStudentDTO.getStudentId())) {
+            throw new CustomErrorException(
+                    HttpStatus.BAD_REQUEST,
+                    "Student with id " + modifyStudentDTO.getStudentId() + " does not exist!");
+        }
+
+        List<String> courseCodes = modifyStudentDTO.getCourseCode();
+        List<Module> modulesTaken = new ArrayList<>();
+
+        for (String courseCode : courseCodes) {
+            Optional<Module> module = moduleRepository.findById(courseCode);
+            module.ifPresent(modulesTaken::add);
+        }
+
+        if (modulesTaken.size() != courseCodes.size()) {
+            throw new CustomErrorException(
+                    HttpStatus.BAD_REQUEST,
+                    "Some of the course codes entered are invalid!");
+        }
+
+        ReadStudentDTO retrievedStudent = studentRepository.findById(modifyStudentDTO.getStudentId()).get();
+
+        retrievedStudent.setMajor(modifyStudentDTO.getMajor());
+        retrievedStudent.setName(modifyStudentDTO.getName());
+        retrievedStudent.setYearOfStudy(modifyStudentDTO.getYearOfStudy());
+        retrievedStudent.setModules(modulesTaken);
+
+        return studentRepository.save(retrievedStudent);
+    }
+
 }

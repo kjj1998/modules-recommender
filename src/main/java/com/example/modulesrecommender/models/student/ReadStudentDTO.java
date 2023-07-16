@@ -7,6 +7,7 @@ import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Property;
 import org.springframework.data.neo4j.core.schema.Relationship;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Node("Student")
@@ -70,5 +71,15 @@ public class ReadStudentDTO {
 
     public void setModules(List<Module> modules) {
         this.modules = modules;
+    }
+
+    public List<String> getCourseCodes() {
+        List<String> courseCodes = new ArrayList<>();
+
+        for (Module module : modules) {
+            courseCodes.add(module.getCourseCode());
+        }
+
+        return courseCodes;
     }
 }
