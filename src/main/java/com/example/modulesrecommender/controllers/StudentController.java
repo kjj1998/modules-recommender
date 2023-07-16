@@ -7,32 +7,49 @@ import com.example.modulesrecommender.models.student.ReturnStudentDTO;
 import com.example.modulesrecommender.repositories.ModuleRepository;
 import com.example.modulesrecommender.repositories.StudentRepository;
 import com.example.modulesrecommender.services.StudentService;
-import org.neo4j.cypherdsl.core.Create;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/students")
 public class StudentController {
 
-    private final StudentRepository studentRepository;
-    private final ModuleRepository moduleRepository;
     private final StudentService studentService;
 
     public StudentController(StudentRepository studentRepository, ModuleRepository moduleRepository, StudentService studentService) {
-        this.studentRepository = studentRepository;
-        this.moduleRepository = moduleRepository;
         this.studentService = studentService;
     }
 
+    /**
+     * GET request to retrieve a student's details by id
+     * @param studentId the id of the student to retrieve details
+     * @return the response object containing the status code and retrieved student object
+     * @since 1.0
+     */
     @GetMapping("/{studentId}")
-    ReadStudentDTO byStudentId(@PathVariable String studentId) {
-        Optional<ReadStudentDTO> student = studentRepository.findById(studentId);
+    ResponseEntity<HttpResponse> byStudentId(@PathVariable String studentId) {
+        try {
+            ReturnStudentDTO student = studentService.readStudent(studentId);
 
-        return student.orElse(null);
+            return new ResponseEntity<>(
+                    new HttpResponse(
+                            HttpStatus.OK,
+                            "Student with id " + studentId + " retrieved.",
+                            student
+                    ),
+                    HttpStatus.OK
+            );
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                    new HttpResponse(
+                            HttpStatus.INTERNAL_SERVER_ERROR,
+                            "Internal Server Error",
+                            null
+                    ),
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
     }
 
     /**

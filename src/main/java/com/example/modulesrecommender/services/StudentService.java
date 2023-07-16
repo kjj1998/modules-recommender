@@ -7,6 +7,7 @@ import com.example.modulesrecommender.models.student.ReadStudentDTO;
 import com.example.modulesrecommender.models.student.ReturnStudentDTO;
 import com.example.modulesrecommender.repositories.ModuleRepository;
 import com.example.modulesrecommender.repositories.StudentRepository;
+import org.neo4j.cypherdsl.core.Return;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -114,5 +115,22 @@ public class StudentService {
                     HttpStatus.INTERNAL_SERVER_ERROR,
                     "Student with id " + studentId + " was not deleted successfully!");
         }
+    }
+
+    public ReturnStudentDTO readStudent(String studentId) {
+        if (!studentRepository.existsById(studentId)) {
+            throw new CustomErrorException(
+                    HttpStatus.BAD_REQUEST,
+                    "Student with id " + studentId + " does not exist!");
+        }
+
+        ReadStudentDTO retrievedStudent = studentRepository.findById(studentId).get();
+
+        return new ReturnStudentDTO(
+                retrievedStudent.getStudentId(),
+                retrievedStudent.getMajor(),
+                retrievedStudent.getName(),
+                retrievedStudent.getYearOfStudy(),
+                retrievedStudent.getCourseCodes());
     }
 }
