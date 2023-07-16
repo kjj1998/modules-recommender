@@ -2,14 +2,13 @@ package com.example.modulesrecommender.models.module;
 
 import com.example.modulesrecommender.models.PrerequisiteGroup;
 import com.example.modulesrecommender.models.Topic;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Property;
 import org.springframework.data.neo4j.core.schema.Relationship;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Node
@@ -21,6 +20,7 @@ public class Module {
     private Integer academicUnits;
     @Property("bde")
     private Boolean broadeningAndDeepeningElective;
+    @JsonIgnore
     @Property("community")
     private Integer community;
     @Property("course_information")
@@ -31,11 +31,9 @@ public class Module {
     private String faculty;
     @Property("grade_type")
     private String gradeType;
-
     @JsonProperty
     @Relationship(type = "CONTAIN", direction = Relationship.Direction.OUTGOING)
     private List<Topic> topics;
-
     @JsonProperty(value = "prerequisites")
     @Relationship(type = "ARE_PREREQUISITES", direction = Relationship.Direction.INCOMING)
     private List<PrerequisiteGroup> prerequisites;

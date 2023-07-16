@@ -7,7 +7,6 @@ import com.example.modulesrecommender.models.student.ReadStudentDTO;
 import com.example.modulesrecommender.models.student.ReturnStudentDTO;
 import com.example.modulesrecommender.repositories.ModuleRepository;
 import com.example.modulesrecommender.repositories.StudentRepository;
-import org.neo4j.cypherdsl.core.Return;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 

@@ -17,7 +17,7 @@ public class StudentController {
 
     private final StudentService studentService;
 
-    public StudentController(StudentRepository studentRepository, ModuleRepository moduleRepository, StudentService studentService) {
+    public StudentController(StudentService studentService) {
         this.studentService = studentService;
     }
 
