@@ -4,6 +4,7 @@ import com.example.modulesrecommender.exceptions.CustomErrorException;
 import com.example.modulesrecommender.models.module.Module;
 import com.example.modulesrecommender.models.student.CreateStudentDTO;
 import com.example.modulesrecommender.models.student.ReadStudentDTO;
+import com.example.modulesrecommender.models.student.ReturnStudentDTO;
 import com.example.modulesrecommender.repositories.ModuleRepository;
 import com.example.modulesrecommender.repositories.StudentRepository;
 import org.springframework.http.HttpStatus;
@@ -61,7 +62,7 @@ public class StudentService {
      * @return the student object containing the updated details
      * @since 1.0
      */
-    public ReadStudentDTO updateStudent(CreateStudentDTO modifyStudentDTO) {
+    public ReturnStudentDTO updateStudent(CreateStudentDTO modifyStudentDTO) {
         if (!studentRepository.existsById(modifyStudentDTO.getStudentId())) {
             throw new CustomErrorException(
                     HttpStatus.BAD_REQUEST,
@@ -89,7 +90,14 @@ public class StudentService {
         retrievedStudent.setYearOfStudy(modifyStudentDTO.getYearOfStudy());
         retrievedStudent.setModules(modulesTaken);
 
-        return studentRepository.save(retrievedStudent);
+        ReadStudentDTO updatedStudent = studentRepository.save(retrievedStudent);
+
+        return new ReturnStudentDTO(
+                updatedStudent.getStudentId(),
+                updatedStudent.getMajor(),
+                updatedStudent.getName(),
+                updatedStudent.getYearOfStudy(),
+                updatedStudent.getCourseCodes());
     }
 
     public void deleteStudent(String studentId) {

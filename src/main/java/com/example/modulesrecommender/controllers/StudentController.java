@@ -58,22 +58,27 @@ public class StudentController {
      */
     @PutMapping("/update")
     ResponseEntity<HttpResponse> updateStudent(@RequestBody CreateStudentDTO modifyStudentDTO) {
-        ReadStudentDTO updatedStudent = studentService.updateStudent(modifyStudentDTO);
-        ReturnStudentDTO returnStudent = new ReturnStudentDTO(
-                updatedStudent.getStudentId(),
-                updatedStudent.getMajor(),
-                updatedStudent.getName(),
-                updatedStudent.getYearOfStudy(),
-                updatedStudent.getCourseCodes());
+        try {
+            ReturnStudentDTO updatedStudent = studentService.updateStudent(modifyStudentDTO);
 
-        return new ResponseEntity<>(
-                new HttpResponse(
-                        HttpStatus.OK,
-                        "Student with id " + updatedStudent.getStudentId() + " updated.",
-                        returnStudent
-                ),
-                HttpStatus.OK
-        );
+            return new ResponseEntity<>(
+                    new HttpResponse(
+                            HttpStatus.OK,
+                            "Student with id " + modifyStudentDTO.getStudentId() + " updated.",
+                            updatedStudent
+                    ),
+                    HttpStatus.OK
+            );
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                    new HttpResponse(
+                            HttpStatus.INTERNAL_SERVER_ERROR,
+                            "Internal Server Error",
+                            null
+                    ),
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
     }
 
     /**
