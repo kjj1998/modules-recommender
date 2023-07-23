@@ -6,6 +6,7 @@ import com.project.modulesRecommender.auth.models.RegisterRequest;
 import com.project.modulesRecommender.auth.models.Role;
 import com.project.modulesRecommender.exceptions.CustomErrorException;
 import com.project.modulesRecommender.repositories.NewStudentRepo;
+import com.project.modulesRecommender.repositories.StudentRepository;
 import com.project.modulesRecommender.student.models.Student;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,7 +18,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
-    private final NewStudentRepo repository;
+    private final StudentRepository repository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
@@ -32,6 +33,8 @@ public class AuthenticationService {
         var user = Student.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
+                .major(request.getMajor())
+                .yearOfStudy(request.getYearOfStudy())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.USER)

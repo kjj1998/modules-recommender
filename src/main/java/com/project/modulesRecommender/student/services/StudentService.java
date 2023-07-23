@@ -2,9 +2,7 @@ package com.project.modulesRecommender.student.services;
 
 import com.project.modulesRecommender.exceptions.CustomErrorException;
 import com.project.modulesRecommender.module.models.Module;
-import com.project.modulesRecommender.student.models.CreateStudentDTO;
-import com.project.modulesRecommender.student.models.ReadStudentDTO;
-import com.project.modulesRecommender.student.models.ReturnStudentDTO;
+import com.project.modulesRecommender.student.models.*;
 import com.project.modulesRecommender.repositories.ModuleRepository;
 import com.project.modulesRecommender.repositories.StudentRepository;
 import org.springframework.http.HttpStatus;
@@ -24,52 +22,21 @@ public class StudentService {
         this.moduleRepository = moduleRepository;
     }
 
-    public ReadStudentDTO createStudent(CreateStudentDTO createStudentDTO) {
-        if (studentRepository.existsById(createStudentDTO.getStudentId())) {
-            throw new CustomErrorException(
-                    HttpStatus.BAD_REQUEST,
-                    "Student with id " + createStudentDTO.getStudentId() + " already exists!");
-        }
-
-        List<String> courseCodes = createStudentDTO.getCourseCode();
-        List<Module> modulesTaken = new ArrayList<>();
-
-        for (String courseCode : courseCodes) {
-            Optional<Module> module = moduleRepository.findById(courseCode);
-            module.ifPresent(modulesTaken::add);
-        }
-
-        if (modulesTaken.size() != courseCodes.size()) {
-            throw new CustomErrorException(
-                    HttpStatus.BAD_REQUEST,
-                    "Some of the course codes entered are invalid!");
-        }
-
-        ReadStudentDTO student = new ReadStudentDTO(
-                createStudentDTO.getStudentId(),
-                createStudentDTO.getMajor(),
-                createStudentDTO.getName(),
-                createStudentDTO.getYearOfStudy(),
-                modulesTaken);
-
-        return studentRepository.save(student);
-    }
-
     /**
      * Update the student details except for studentId which is unique and fixed upon account creation
      *
-     * @param modifyStudentDTO the data transfer object containing the updated details of the student
+     * @param studentDTO the data transfer object containing the updated details of the student
      * @return the student object containing the updated details
      * @since 1.0
      */
-    public ReturnStudentDTO updateStudent(CreateStudentDTO modifyStudentDTO) {
-        if (!studentRepository.existsById(modifyStudentDTO.getStudentId())) {
+    public StudentDTO updateStudent(StudentDTO studentDTO) {
+        if (!studentRepository.existsById(studentDTO.getStudentId())) {
             throw new CustomErrorException(
                     HttpStatus.BAD_REQUEST,
-                    "Student with id " + modifyStudentDTO.getStudentId() + " does not exist!");
+                    "Student with id " + studentDTO.getStudentId() + " does not exist!");
         }
 
-        List<String> courseCodes = modifyStudentDTO.getCourseCode();
+        List<String> courseCodes = studentDTO.getCourseCodes();
         List<Module> modulesTaken = new ArrayList<>();
 
         for (String courseCode : courseCodes) {
@@ -83,21 +50,26 @@ public class StudentService {
                     "Some of the course codes entered are invalid!");
         }
 
-        ReadStudentDTO retrievedStudent = studentRepository.findById(modifyStudentDTO.getStudentId()).get();
+        Student retrievedStudent = studentRepository.findById(studentDTO.getStudentId()).get();
 
-        retrievedStudent.setMajor(modifyStudentDTO.getMajor());
-        retrievedStudent.setName(modifyStudentDTO.getName());
-        retrievedStudent.setYearOfStudy(modifyStudentDTO.getYearOfStudy());
+        retrievedStudent.setMajor(studentDTO.getMajor());
+        retrievedStudent.setFirstName(studentDTO.getFirstName());
+        retrievedStudent.setLastName(studentDTO.getLastName());
+        retrievedStudent.setYearOfStudy(studentDTO.getYearOfStudy());
+        retrievedStudent.setEmail(studentDTO.getEmail());
         retrievedStudent.setModules(modulesTaken);
 
-        ReadStudentDTO updatedStudent = studentRepository.save(retrievedStudent);
+        Student updatedStudent = studentRepository.save(retrievedStudent);
 
-        return new ReturnStudentDTO(
-                updatedStudent.getStudentId(),
-                updatedStudent.getMajor(),
-                updatedStudent.getName(),
-                updatedStudent.getYearOfStudy(),
-                updatedStudent.getCourseCodes());
+        return StudentDTO.builder()
+                .firstName(updatedStudent.getFirstName())
+                .lastName(updatedStudent.getLastName())
+                .email(updatedStudent.getEmail())
+                .studentId(updatedStudent.getStudentId())
+                .major(updatedStudent.getMajor())
+                .courseCodes(updatedStudent.getCourseCodes())
+                .yearOfStudy(updatedStudent.getYearOfStudy())
+                .build();
     }
 
     public void deleteStudent(String studentId) {
@@ -116,20 +88,23 @@ public class StudentService {
         }
     }
 
-    public ReturnStudentDTO readStudent(String studentId) {
+    public StudentDTO readStudent(String studentId) {
         if (!studentRepository.existsById(studentId)) {
             throw new CustomErrorException(
                     HttpStatus.BAD_REQUEST,
                     "Student with id " + studentId + " does not exist!");
         }
 
-        ReadStudentDTO retrievedStudent = studentRepository.findById(studentId).get();
+        Student retrievedStudent = studentRepository.findById(studentId).get();
 
-        return new ReturnStudentDTO(
-                retrievedStudent.getStudentId(),
-                retrievedStudent.getMajor(),
-                retrievedStudent.getName(),
-                retrievedStudent.getYearOfStudy(),
-                retrievedStudent.getCourseCodes());
+        return StudentDTO.builder()
+                .firstName(retrievedStudent.getFirstName())
+                .lastName(retrievedStudent.getLastName())
+                .email(retrievedStudent.getEmail())
+                .studentId(retrievedStudent.getStudentId())
+                .major(retrievedStudent.getMajor())
+                .courseCodes(retrievedStudent.getCourseCodes())
+                .yearOfStudy(retrievedStudent.getYearOfStudy())
+                .build();
     }
 }

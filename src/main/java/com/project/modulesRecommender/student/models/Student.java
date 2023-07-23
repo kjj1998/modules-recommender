@@ -15,6 +15,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -24,33 +25,24 @@ import java.util.List;
 @AllArgsConstructor
 @Node("Student")
 public class Student implements UserDetails {
-
     @Id
     @Property("student_id")
     private String studentId;
-
     @Property("password")
     private String password;
-
     @Property("email")
     private String email;
-
     @Property("major")
     private String major;
-
     @Property("first_name")
     private String firstName;
-
     @Property("last_name")
     private String lastName;
-
     @Property("year_of_study")
     private Integer yearOfStudy;
-
     @JsonProperty("modules")
     @Relationship(type = "TAKES", direction = Relationship.Direction.OUTGOING)
     private List<Module> modules;
-
     @Property("role")
     private Role role;
 
@@ -61,7 +53,7 @@ public class Student implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return studentId;
     }
 
     @Override
@@ -82,5 +74,15 @@ public class Student implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public List<String> getCourseCodes() {
+        List<String> courseCodes = new ArrayList<>();
+
+        for (Module module : modules) {
+            courseCodes.add(module.getCourseCode());
+        }
+
+        return courseCodes;
     }
 }

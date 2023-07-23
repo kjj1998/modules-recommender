@@ -1,16 +1,16 @@
 package com.project.modulesRecommender.student.controllers;
 
 import com.project.modulesRecommender.errors.HttpResponse;
-import com.project.modulesRecommender.student.models.CreateStudentDTO;
-import com.project.modulesRecommender.student.models.ReadStudentDTO;
-import com.project.modulesRecommender.student.models.ReturnStudentDTO;
+import com.project.modulesRecommender.student.models.StudentDTO;
 import com.project.modulesRecommender.student.services.StudentService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/students")
+@RequestMapping("api/v1/students")
+//@SecurityRequirement(name = "bearerAuth")
 public class StudentController {
 
     private final StudentService studentService;
@@ -28,7 +28,7 @@ public class StudentController {
     @GetMapping("/{studentId}")
     ResponseEntity<HttpResponse> byStudentId(@PathVariable String studentId) {
         try {
-            ReturnStudentDTO student = studentService.readStudent(studentId);
+            StudentDTO student = studentService.readStudent(studentId);
 
             return new ResponseEntity<>(
                     new HttpResponse(
@@ -51,51 +51,20 @@ public class StudentController {
     }
 
     /**
-     * POST request to create a new student in the database
-     * @param createStudentDTO DTO containing details of student to be created
-     * @return the response object containing the status code and created student object
-     * @since 1.0
-     */
-    @PostMapping("/create")
-    ResponseEntity<HttpResponse> createStudent(@RequestBody CreateStudentDTO createStudentDTO) {
-        try {
-            ReadStudentDTO createdStudent = studentService.createStudent(createStudentDTO);
-
-            return new ResponseEntity<>(
-                    new HttpResponse(
-                            HttpStatus.CREATED,
-                            "Student with id " + createdStudent.getStudentId() + " created.",
-                            createdStudent
-                    ),
-                    HttpStatus.CREATED
-            );
-        } catch (Exception e) {
-            return new ResponseEntity<>(
-                    new HttpResponse(
-                            HttpStatus.INTERNAL_SERVER_ERROR,
-                            "Internal Server Error",
-                            null
-                    ),
-                    HttpStatus.INTERNAL_SERVER_ERROR
-            );
-        }
-    }
-
-    /**
      * PUT request to update the details of a student
-     * @param modifyStudentDTO the data transfer object containing the updated details of the student
+     * @param studentDTO the data transfer object containing the updated details of the student
      * @return the response object containing the status code and updated student object
      * @since 1.0
      */
     @PutMapping("/update")
-    ResponseEntity<HttpResponse> updateStudent(@RequestBody CreateStudentDTO modifyStudentDTO) {
+    ResponseEntity<HttpResponse> updateStudent(@RequestBody StudentDTO studentDTO) {
         try {
-            ReturnStudentDTO updatedStudent = studentService.updateStudent(modifyStudentDTO);
+            StudentDTO updatedStudent = studentService.updateStudent(studentDTO);
 
             return new ResponseEntity<>(
                     new HttpResponse(
                             HttpStatus.OK,
-                            "Student with id " + modifyStudentDTO.getStudentId() + " updated.",
+                            "Student with id " + studentDTO.getStudentId() + " updated.",
                             updatedStudent
                     ),
                     HttpStatus.OK

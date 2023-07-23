@@ -22,7 +22,7 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<HttpResponse> register(@RequestBody RegisterRequest request) {
-        try {
+//        try {
             AuthenticationResponse response = service.register(request);
 
             return new ResponseEntity<>(
@@ -33,16 +33,16 @@ public class AuthenticationController {
                     ),
                     HttpStatus.OK
             );
-        } catch (Exception e) {
-            return new ResponseEntity<>(
-                    new HttpResponse(
-                            HttpStatus.INTERNAL_SERVER_ERROR,
-                            "Internal Server Error",
-                            null
-                    ),
-                    HttpStatus.INTERNAL_SERVER_ERROR
-            );
-        }
+//        } catch (Exception e) {
+//            return new ResponseEntity<>(
+//                    new HttpResponse(
+//                            HttpStatus.INTERNAL_SERVER_ERROR,
+//                            "Internal Server Error",
+//                            null
+//                    ),
+//                    HttpStatus.INTERNAL_SERVER_ERROR
+//            );
+//        }
     }
 
     @PostMapping("/authenticate")
