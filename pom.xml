@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.example</groupId>
 	<artifactId>modules-recommender</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>Modules Recommender</name>
 	<description>Backend for the Neo4j-based modules recommender</description>
 	<properties>
@@ -48,8 +48,31 @@
             <artifactId>lombok</artifactId>
             <version>1.18.20</version>
         </dependency>
-    </dependencies>
-
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>0.11.5</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>0.11.5</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<version>0.11.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.data</groupId>-->
+<!--			<artifactId>spring-data-jpa</artifactId>-->
+<!--			<version>3.1.1</version>-->
+<!--		</dependency>-->
+	</dependencies>
 	<build>
 		<plugins>
 			<plugin>
@@ -58,5 +81,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
