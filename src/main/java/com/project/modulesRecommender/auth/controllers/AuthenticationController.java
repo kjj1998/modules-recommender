@@ -22,7 +22,6 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<HttpResponse> register(@RequestBody RegisterRequest request) {
-//        try {
             AuthenticationResponse response = service.register(request);
 
             return new ResponseEntity<>(
@@ -33,40 +32,19 @@ public class AuthenticationController {
                     ),
                     HttpStatus.OK
             );
-//        } catch (Exception e) {
-//            return new ResponseEntity<>(
-//                    new HttpResponse(
-//                            HttpStatus.INTERNAL_SERVER_ERROR,
-//                            "Internal Server Error",
-//                            null
-//                    ),
-//                    HttpStatus.INTERNAL_SERVER_ERROR
-//            );
-//        }
     }
 
     @PostMapping("/authenticate")
     public ResponseEntity<HttpResponse> authenticate(@RequestBody AuthenticationRequest request) {
-        try {
-            var response = service.authenticate(request);
+        var response = service.authenticate(request);
 
-            return new ResponseEntity<>(
-                    new HttpResponse(
-                            HttpStatus.OK,
-                            "Student with id " + request.getStudentId() + " authenticated.",
-                            response
-                    ),
-                    HttpStatus.OK
-            );
-        } catch (Exception e) {
-            return new ResponseEntity<>(
-                    new HttpResponse(
-                            HttpStatus.INTERNAL_SERVER_ERROR,
-                            "Internal Server Error",
-                            null
-                    ),
-                    HttpStatus.INTERNAL_SERVER_ERROR
-            );
-        }
+        return new ResponseEntity<>(
+                new HttpResponse(
+                        HttpStatus.OK,
+                        "Student with id " + request.getStudentId() + " authenticated.",
+                        response
+                ),
+                HttpStatus.OK
+        );
     }
 }

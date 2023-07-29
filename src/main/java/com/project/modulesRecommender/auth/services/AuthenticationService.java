@@ -5,7 +5,6 @@ import com.project.modulesRecommender.auth.models.AuthenticationResponse;
 import com.project.modulesRecommender.auth.models.RegisterRequest;
 import com.project.modulesRecommender.auth.models.Role;
 import com.project.modulesRecommender.exceptions.CustomErrorException;
-import com.project.modulesRecommender.repositories.NewStudentRepo;
 import com.project.modulesRecommender.repositories.StudentRepository;
 import com.project.modulesRecommender.student.models.Student;
 import lombok.RequiredArgsConstructor;

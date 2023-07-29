@@ -27,27 +27,16 @@ public class StudentController {
      */
     @GetMapping("/{studentId}")
     ResponseEntity<HttpResponse> byStudentId(@PathVariable String studentId) {
-        try {
-            StudentDTO student = studentService.readStudent(studentId);
+        StudentDTO student = studentService.readStudent(studentId);
 
-            return new ResponseEntity<>(
-                    new HttpResponse(
-                            HttpStatus.OK,
-                            "Student with id " + studentId + " retrieved.",
-                            student
-                    ),
-                    HttpStatus.OK
-            );
-        } catch (Exception e) {
-            return new ResponseEntity<>(
-                    new HttpResponse(
-                            HttpStatus.INTERNAL_SERVER_ERROR,
-                            "Internal Server Error",
-                            null
-                    ),
-                    HttpStatus.INTERNAL_SERVER_ERROR
-            );
-        }
+        return new ResponseEntity<>(
+                new HttpResponse(
+                        HttpStatus.OK,
+                        "Student with id " + studentId + " retrieved.",
+                        student
+                ),
+                HttpStatus.OK
+        );
     }
 
     /**
@@ -58,27 +47,16 @@ public class StudentController {
      */
     @PutMapping("/update")
     ResponseEntity<HttpResponse> updateStudent(@RequestBody StudentDTO studentDTO) {
-        try {
-            StudentDTO updatedStudent = studentService.updateStudent(studentDTO);
+        StudentDTO updatedStudent = studentService.updateStudent(studentDTO);
 
-            return new ResponseEntity<>(
-                    new HttpResponse(
-                            HttpStatus.OK,
-                            "Student with id " + studentDTO.getStudentId() + " updated.",
-                            updatedStudent
-                    ),
-                    HttpStatus.OK
-            );
-        } catch (Exception e) {
-            return new ResponseEntity<>(
-                    new HttpResponse(
-                            HttpStatus.INTERNAL_SERVER_ERROR,
-                            "Internal Server Error",
-                            null
-                    ),
-                    HttpStatus.INTERNAL_SERVER_ERROR
-            );
-        }
+        return new ResponseEntity<>(
+                new HttpResponse(
+                        HttpStatus.OK,
+                        "Student with id " + studentDTO.getStudentId() + " updated.",
+                        updatedStudent
+                ),
+                HttpStatus.OK
+        );
     }
 
     /**
@@ -89,26 +67,15 @@ public class StudentController {
      */
     @DeleteMapping("/{studentId}")
     ResponseEntity<HttpResponse> deleteStudent(@PathVariable String studentId) {
-        try {
-            studentService.deleteStudent(studentId);
+        studentService.deleteStudent(studentId);
 
-            return new ResponseEntity<>(
-                    new HttpResponse(
-                            HttpStatus.OK,
-                            "Student with id " + studentId + " is deleted.",
-                            null
-                    ),
-                    HttpStatus.OK
-            );
-        } catch (Exception e) {
-            return new ResponseEntity<>(
-                    new HttpResponse(
-                            HttpStatus.INTERNAL_SERVER_ERROR,
-                            "Internal Server Error",
-                            null
-                    ),
-                    HttpStatus.INTERNAL_SERVER_ERROR
-            );
-        }
+        return new ResponseEntity<>(
+                new HttpResponse(
+                        HttpStatus.OK,
+                        "Student with id " + studentId + " is deleted.",
+                        null
+                ),
+                HttpStatus.OK
+        );
     }
 }
