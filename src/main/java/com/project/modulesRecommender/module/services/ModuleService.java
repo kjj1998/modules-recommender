@@ -18,6 +18,18 @@ public class ModuleService {
         this.moduleRepository = moduleRepository;
     }
 
+    public Module retrieveModule(String courseCode) {
+        Optional<Module> retrievedModule = moduleRepository.findById(courseCode);
+
+        if (retrievedModule.isEmpty()) {
+            throw new CustomErrorException(
+                    HttpStatus.BAD_REQUEST,
+                    "Course code " + courseCode + " is invalid!");
+        }
+
+        return retrievedModule.get();
+    }
+
     public List<Module> retrieveModules(List<String> courseCodes) {
         List<Module> modulesRetrieved = new ArrayList<>();
 

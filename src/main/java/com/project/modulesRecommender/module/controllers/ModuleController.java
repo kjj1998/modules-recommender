@@ -2,8 +2,8 @@ package com.project.modulesRecommender.module.controllers;
 
 import com.project.modulesRecommender.errors.HttpResponse;
 import com.project.modulesRecommender.module.models.Module;
-import com.project.modulesRecommender.repositories.ModuleRepository;
 import com.project.modulesRecommender.module.services.ModuleService;
+import com.project.modulesRecommender.repositories.ModuleRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/modules")
+@RequestMapping("/api/v1/modules")
 public class ModuleController {
     private final ModuleRepository moduleRepository;
     private final ModuleService moduleService;
@@ -22,9 +22,24 @@ public class ModuleController {
         this.moduleService = moduleService;
     }
 
+    /**
+     * GET request to retrieve a single module based on its course code
+     * @param courseCode the course code to retrieve
+     * @return the response object containing the status code and retrieved module object
+     * @since 1.0
+     */
     @GetMapping("/{courseCode}")
-    Optional<Module> byCourseCode(@PathVariable String courseCode) {
-        return moduleRepository.findById(courseCode);
+    ResponseEntity<HttpResponse> byCourseCode(@PathVariable String courseCode) {
+        Module module = moduleService.retrieveModule(courseCode);
+
+        return new ResponseEntity<>(
+                new HttpResponse(
+                        HttpStatus.OK,
+                        "Module with course code " + courseCode + " is retrieved.",
+                        module
+                ),
+                HttpStatus.OK
+        );
     }
 
     /**
@@ -35,26 +50,15 @@ public class ModuleController {
      */
     @PostMapping()
     ResponseEntity<HttpResponse> retrieveModules(@RequestBody List<String> courseCodes) {
-        try {
-            List<Module> modulesRetrieved = moduleService.retrieveModules(courseCodes);
+        List<Module> modulesRetrieved = moduleService.retrieveModules(courseCodes);
 
-            return new ResponseEntity<>(
-                    new HttpResponse(
-                            HttpStatus.OK,
-                            "All selected modules retrieved.",
-                            modulesRetrieved
-                    ),
-                    HttpStatus.OK
-            );
-        } catch (Exception e) {
-            return new ResponseEntity<>(
-                    new HttpResponse(
-                            HttpStatus.INTERNAL_SERVER_ERROR,
-                            "Internal Server Error",
-                            null
-                    ),
-                    HttpStatus.INTERNAL_SERVER_ERROR
-            );
-        }
+        return new ResponseEntity<>(
+                new HttpResponse(
+                        HttpStatus.OK,
+                        "All selected modules retrieved.",
+                        modulesRetrieved
+                ),
+                HttpStatus.OK
+        );
     }
 }
