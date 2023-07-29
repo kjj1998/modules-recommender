@@ -1,4 +1,4 @@
-package com.project.modulesRecommender.module.models;
+package com.project.modulesRecommender.module;
 
 import com.project.modulesRecommender.models.PrerequisiteGroup;
 import com.project.modulesRecommender.models.Topic;

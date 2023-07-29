@@ -1,7 +1,7 @@
-package com.project.modulesRecommender.module.services;
+package com.project.modulesRecommender.module;
 
 import com.project.modulesRecommender.exceptions.CustomErrorException;
-import com.project.modulesRecommender.module.models.Module;
+import com.project.modulesRecommender.module.Module;
 import com.project.modulesRecommender.repositories.ModuleRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package com.project.modulesRecommender.auth.controllers;
+package com.project.modulesRecommender.auth;
 
 import com.project.modulesRecommender.auth.models.AuthenticationRequest;
 import com.project.modulesRecommender.auth.models.AuthenticationResponse;

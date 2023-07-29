@@ -1,7 +1,7 @@
 package com.project.modulesRecommender.recommendation;
 
 import com.project.modulesRecommender.errors.HttpResponse;
-import com.project.modulesRecommender.module.models.Module;
+import com.project.modulesRecommender.module.Module;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,15 +1,12 @@
-package com.project.modulesRecommender.module.controllers;
+package com.project.modulesRecommender.module;
 
 import com.project.modulesRecommender.errors.HttpResponse;
-import com.project.modulesRecommender.module.models.Module;
-import com.project.modulesRecommender.module.services.ModuleService;
 import com.project.modulesRecommender.repositories.ModuleRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/modules")

@@ -2,7 +2,7 @@ package com.project.modulesRecommender.student.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.project.modulesRecommender.auth.models.Role;
-import com.project.modulesRecommender.module.models.Module;
+import com.project.modulesRecommender.module.Module;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

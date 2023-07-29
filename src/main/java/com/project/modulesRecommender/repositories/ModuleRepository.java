@@ -1,6 +1,6 @@
 package com.project.modulesRecommender.repositories;
 
-import com.project.modulesRecommender.module.models.Module;
+import com.project.modulesRecommender.module.Module;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;

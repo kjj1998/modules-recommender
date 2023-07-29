@@ -1,9 +1,7 @@
-package com.project.modulesRecommender.student.controllers;
+package com.project.modulesRecommender.student;
 
 import com.project.modulesRecommender.errors.HttpResponse;
 import com.project.modulesRecommender.student.models.StudentDTO;
-import com.project.modulesRecommender.student.services.StudentService;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

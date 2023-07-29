@@ -2,7 +2,7 @@ package com.project.modulesRecommender.recommendation;
 
 import com.project.modulesRecommender.auth.services.JwtService;
 import com.project.modulesRecommender.exceptions.CustomErrorException;
-import com.project.modulesRecommender.module.models.Module;
+import com.project.modulesRecommender.module.Module;
 import com.project.modulesRecommender.repositories.ModuleRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
