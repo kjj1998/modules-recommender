@@ -7,12 +7,12 @@ import com.project.modulesRecommender.student.models.Student;
 import com.project.modulesRecommender.repositories.ModuleRepository;
 import com.project.modulesRecommender.repositories.StudentRepository;
 import com.project.modulesRecommender.student.models.StudentDTO;
-import org.springframework.boot.autoconfigure.hazelcast.HazelcastJpaDependencyAutoConfiguration;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
 
 @Service
 public class StudentService {
@@ -48,71 +48,10 @@ public class StudentService {
                     studentDTO);
         }
 
-        Map<String, List<Set<String>>> inDegree = new HashMap<>();
-        Map<String, List<String>> outDegree = new HashMap<>();
+        var courseCodesOfEligibleModules = this.checkPrerequisitesFulfillment(studentDtoModules);
 
-        for (Module module : studentDtoModules) {
-            String currentCourseCode = module.getCourseCode();
-            List<PrerequisiteGroup> prereqGroups = module.getPrerequisites();
-
-            inDegree.put(currentCourseCode, new ArrayList<>());
-
-            for (PrerequisiteGroup prerequisiteGroup : prereqGroups) {
-                List<Module> prereqModules = prerequisiteGroup.getModules();
-
-                for (Module prereqModule : prereqModules) {
-                    if (!outDegree.containsKey(prereqModule.getCourseCode())) {
-                        outDegree.put(currentCourseCode, new ArrayList<>());
-                    }
-                    outDegree.get(currentCourseCode).add(prereqModule.getCourseCode());
-                }
-
-                inDegree.get(currentCourseCode)
-                        .add(new HashSet<>(
-                                prereqModules
-                                        .stream()
-                                        .map(Module::getCourseCode)
-                                        .collect(Collectors.toSet()))
-                        );
-            }
-        }
-
-        List<String> visitedModules = new ArrayList<>();
-        Queue<String> queue = new LinkedList<>();
-
-        for (String courseCode : inDegree.keySet()) {
-            if (inDegree.get(courseCode).isEmpty()) {
-                queue.add(courseCode);
-            }
-        }
-
-        while (!queue.isEmpty()) {
-            String curCourseCode = queue.poll();
-            visitedModules.add(curCourseCode);
-
-            List<String> nextModules = outDegree.get(curCourseCode);
-
-            if (nextModules != null && nextModules.size() > 0) {
-                for (String nextModule : nextModules) {
-                    List<Set<String>> prereqGroups = inDegree.get(nextModule);
-
-                    for (Set<String> prereqGroup : prereqGroups) {
-                        if (prereqGroup.contains(curCourseCode)) {
-                            prereqGroup.remove(curCourseCode);
-                        }
-
-                        if (prereqGroup.isEmpty()) {
-                            queue.add(nextModule);
-                            inDegree.put(nextModule, new ArrayList<>());
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        if (visitedModules.size() != studentDtoCourseCodes.size()) {
-            Set<String> setOfValidCourses = new HashSet<>(visitedModules);
+        if (courseCodesOfEligibleModules.size() != studentDtoCourseCodes.size()) {
+            Set<String> setOfValidCourses = new HashSet<>(courseCodesOfEligibleModules);
             StringBuilder sb = new StringBuilder();
 
             for (String studentDtoCourseCode : studentDtoCourseCodes) {
@@ -123,7 +62,7 @@ public class StudentService {
 
             throw new CustomErrorException(
                     HttpStatus.BAD_REQUEST,
-                    "You have not taken the necessary prerequisite courses for the following course: " + sb.toString() + "!" ,
+                    "You have not taken the necessary prerequisite courses for the following course(s): " + sb.toString() + "!" ,
                     null);
         }
 
@@ -194,5 +133,78 @@ public class StudentService {
         }
 
         return modulesTaken;
+    }
+
+    /**
+     * Function to check that modules fulfill their prerequisites, the algorithm used is topological sort
+     * @param studentDtoModules list of modules whose eligibility are to be checked
+     * @return list of course codes of eligible modules
+     * @since 1.0
+     */
+    public List<String> checkPrerequisitesFulfillment(List<Module> studentDtoModules) {
+        Map<String, List<Set<String>>> inDegree = new HashMap<>();
+        Map<String, List<String>> outDegree = new HashMap<>();
+
+        for (Module module : studentDtoModules) {
+            String currentCourseCode = module.getCourseCode();
+            List<PrerequisiteGroup> prereqGroups = module.getPrerequisites();
+
+            inDegree.put(currentCourseCode, new ArrayList<>());
+
+            if (prereqGroups != null && !prereqGroups.isEmpty()) {
+                for (PrerequisiteGroup prerequisiteGroup : prereqGroups) {
+                    List<Module> prereqModules = prerequisiteGroup.getModules();
+
+                    for (Module prereqModule : prereqModules) {
+                        if (!outDegree.containsKey(prereqModule.getCourseCode())) {
+                            outDegree.put(prereqModule.getCourseCode(), new ArrayList<>());
+                        }
+                        outDegree.get(prereqModule.getCourseCode()).add(currentCourseCode);
+                    }
+
+                    inDegree.get(currentCourseCode)
+                            .add(new HashSet<>(
+                                    prereqModules
+                                            .stream()
+                                            .map(Module::getCourseCode)
+                                            .collect(Collectors.toSet()))
+                            );
+                }
+            }
+        }
+
+        List<String> courseCodesOfEligibleModules = new ArrayList<>();
+        Queue<String> queue = new LinkedList<>();
+
+        for (String courseCode : inDegree.keySet()) {
+            if (inDegree.get(courseCode).isEmpty()) {
+                queue.add(courseCode);
+            }
+        }
+
+        while (!queue.isEmpty()) {
+            String curCourseCode = queue.poll();
+            courseCodesOfEligibleModules.add(curCourseCode);
+
+            List<String> nextModules = outDegree.get(curCourseCode);
+
+            if (nextModules != null && nextModules.size() > 0) {
+                for (String nextModule : nextModules) {
+                    List<Set<String>> prereqGroups = inDegree.get(nextModule);
+
+                    for (Set<String> prereqGroup : prereqGroups) {
+                        prereqGroup.remove(curCourseCode);
+
+                        if (prereqGroup.isEmpty()) {
+                            queue.add(nextModule);
+                            inDegree.put(nextModule, new ArrayList<>());
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return courseCodesOfEligibleModules;
     }
 }
