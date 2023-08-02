@@ -13,6 +13,7 @@ import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Property;
 import org.springframework.data.neo4j.core.schema.Relationship;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -20,38 +21,69 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Node
-public class Module {
+public class Module implements Cloneable{
     @Id
     @Property("course_code")
-    private String courseCode;
+    public String courseCode;
 
     @Property("academic_units")
-    private Integer academicUnits;
+    public Integer academicUnits;
 
     @Property("bde")
-    private Boolean broadeningAndDeepeningElective;
+    public Boolean broadeningAndDeepeningElective;
 
     @JsonIgnore
     @Property("community")
-    private Integer community;
+    public Integer community;
 
     @Property("course_information")
-    private String courseInformation;
+    public String courseInformation;
 
     @Property("course_name")
-    private String courseName;
+    public String courseName;
 
     @Property("faculty")
-    private String faculty;
+    public String faculty;
 
     @Property("grade_type")
-    private String gradeType;
+    public String gradeType;
 
     @JsonProperty
     @Relationship(type = "CONTAIN", direction = Relationship.Direction.OUTGOING)
-    private List<Topic> topics;
+    public List<Topic> topics;
 
     @JsonProperty(value = "prerequisites")
     @Relationship(type = "ARE_PREREQUISITES", direction = Relationship.Direction.INCOMING)
-    private List<PrerequisiteGroup> prerequisites;
+    public List<PrerequisiteGroup> prerequisites;
+
+    @Override
+    public Module clone() {
+        try {
+            Module clone = (Module) super.clone();
+            List<Topic> clonedTopics;
+            List<PrerequisiteGroup> clonedPrereqs;
+
+            if (topics != null && !topics.isEmpty()) {
+                clonedTopics = topics.stream()
+                        .map(Topic::clone)
+                        .toList();
+            } else {
+                clonedTopics = new ArrayList<>();
+            }
+            clone.setTopics(clonedTopics);
+
+            if (prerequisites != null && !prerequisites.isEmpty()) {
+                clonedPrereqs = prerequisites.stream()
+                        .map(PrerequisiteGroup::clone)
+                        .toList();
+            } else {
+                clonedPrereqs = new ArrayList<>();
+            }
+            clone.setPrerequisites(clonedPrereqs);
+
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 }

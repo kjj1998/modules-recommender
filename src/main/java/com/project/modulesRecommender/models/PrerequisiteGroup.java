@@ -1,8 +1,12 @@
 package com.project.modulesRecommender.models;
 
-import com.project.modulesRecommender.module.Module;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.project.modulesRecommender.module.Module;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Property;
@@ -11,8 +15,12 @@ import org.springframework.data.neo4j.core.schema.Relationship;
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Node
-public class PrerequisiteGroup {
+public class PrerequisiteGroup implements Cloneable {
 
     @Id @Property("group_id")
     private String groupId;
@@ -24,16 +32,24 @@ public class PrerequisiteGroup {
     @Relationship(type = "INSIDE", direction = Relationship.Direction.INCOMING)
     private List<Module> modules = new ArrayList<>();
 
-    public PrerequisiteGroup(String groupId, List<Module> modules) {
-        this.groupId = groupId;
-        this.modules = modules;
-    }
+    @Override
+    public PrerequisiteGroup clone() {
+        try {
+            PrerequisiteGroup clone = (PrerequisiteGroup) super.clone();
 
-    public String getGroupId() {
-        return groupId;
-    }
+            List<Module> clonedModules;
+            if (modules != null && !modules.isEmpty()) {
+                clonedModules = modules.stream()
+                        .map(Module::clone)
+                        .toList();
+            } else {
+                clonedModules = new ArrayList<>();
+            }
+            clone.setModules(clonedModules);
 
-    public List<Module> getModules() {
-        return modules;
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }
