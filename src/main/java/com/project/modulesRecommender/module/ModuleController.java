@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.List;
 
 @RestController
@@ -53,6 +54,20 @@ public class ModuleController {
                 new HttpResponse(
                         HttpStatus.OK,
                         "All selected modules retrieved.",
+                        modulesRetrieved
+                ),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/search/{searchTerm}/{skip}/{limit}")
+    ResponseEntity<HttpResponse> searchForModules(@PathVariable String searchTerm, @PathVariable Integer skip, @PathVariable Integer limit) {
+        Collection<NonDomainResult.SearchResult> modulesRetrieved = moduleService.searchModules(searchTerm, skip, limit);
+
+        return new ResponseEntity<>(
+                new HttpResponse(
+                        HttpStatus.OK,
+                        "Returning search results",
                         modulesRetrieved
                 ),
                 HttpStatus.OK

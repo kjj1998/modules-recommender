@@ -1,20 +1,21 @@
 package com.project.modulesRecommender.module;
 
 import com.project.modulesRecommender.exceptions.CustomErrorException;
+import com.project.modulesRecommender.module.NonDomainResult.SearchResult;
 import com.project.modulesRecommender.repositories.ModuleRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ModuleService {
     private final ModuleRepository moduleRepository;
+    private final NonDomainResult nonDomainResult;
 
-    public ModuleService(ModuleRepository moduleRepository) {
+    public ModuleService(ModuleRepository moduleRepository, NonDomainResult nonDomainResult) {
         this.moduleRepository = moduleRepository;
+        this.nonDomainResult = nonDomainResult;
     }
 
     public Module retrieveModule(String courseCode) {
@@ -44,5 +45,12 @@ public class ModuleService {
         }
 
         return modulesRetrieved;
+    }
+
+    public Collection<SearchResult> searchModules(String searchTerm, Integer skip, Integer limit) {
+
+        Collection<SearchResult> results = nonDomainResult.searchForModules(searchTerm, skip == null ? 0 : skip, limit);
+
+        return results;
     }
 }
