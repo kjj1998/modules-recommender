@@ -1,6 +1,8 @@
 package com.project.modulesRecommender.student;
 
 import com.project.modulesRecommender.errors.HttpResponse;
+import com.project.modulesRecommender.module.models.Module;
+import com.project.modulesRecommender.repositories.ModuleRepository;
 import com.project.modulesRecommender.student.models.StudentDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,7 @@ public class StudentController {
     private final StudentService studentService;
 
     public StudentController(StudentService studentService) {
+
         this.studentService = studentService;
     }
 

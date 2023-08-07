@@ -22,6 +22,12 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
+    /**
+     * Method to register a user, first check for existing user before saving into the database.
+     * Returns a JWT token
+     * @param request The RegisterRequest object containing the needed user information
+     * @return AuthenticationResponse object containing the JWT token
+     */
     public AuthenticationResponse register(RegisterRequest request) {
         if (repository.existsById(request.getStudentId())) {
             throw new CustomErrorException(
@@ -49,6 +55,12 @@ public class AuthenticationService {
                 .build();
     }
 
+    /**
+     * Method to authenticate a user, first checks whether said user exists.
+     * Returns a JWT token after authenticating user
+     * @param request The AuthenticationRequest object containing user info to be authenticated
+     * @return JWT token of authenticated user
+     */
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(

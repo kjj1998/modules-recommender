@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Authentication request class containing the studentId and password
+ */
 @Data
 @Builder
 @AllArgsConstructor

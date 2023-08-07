@@ -1,4 +1,4 @@
-package com.project.modulesRecommender.module;
+package com.project.modulesRecommender.recommendation.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,12 +7,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 
-public interface NonDomainResult {
-
+public interface moduleRecInterface {
     @Data
     @Builder
     @AllArgsConstructor
-    class SearchResult {
+    class Recommendation {
         public final String courseCode;
         public final String courseName;
         public final String courseInformation;
@@ -22,5 +21,5 @@ public interface NonDomainResult {
     }
 
     @Transactional(readOnly = true)
-    Collection<SearchResult> searchForModules(String searchTerm, Integer skip, Integer limit);
+    Collection<Recommendation> recommendModules(String studentId);
 }

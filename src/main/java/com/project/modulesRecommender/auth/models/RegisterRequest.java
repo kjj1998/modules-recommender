@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Register request class containing the necessary information to register a student
+ */
 @Data
 @Builder
 @AllArgsConstructor

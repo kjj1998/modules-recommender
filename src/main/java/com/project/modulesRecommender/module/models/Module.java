@@ -1,10 +1,9 @@
-package com.project.modulesRecommender.module;
+package com.project.modulesRecommender.module.models;
 
-import com.project.modulesRecommender.models.PrerequisiteGroup;
-import com.project.modulesRecommender.models.Topic;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.project.modulesRecommender.models.relationship.Similar;
+import com.project.modulesRecommender.models.PrerequisiteGroup;
+import com.project.modulesRecommender.models.Topic;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -57,9 +56,9 @@ public class Module implements Cloneable{
     @Relationship(type = "ARE_PREREQUISITES", direction = Relationship.Direction.INCOMING)
     public List<PrerequisiteGroup> prerequisites;
 
-    @JsonProperty(value = "similar")
-    @Relationship(type = "SIMILAR", direction = Relationship.Direction.OUTGOING)
-    public List<Similar> similarModules;
+//    @JsonProperty(value = "similar")
+//    @Relationship(type = "SIMILAR", direction = Relationship.Direction.OUTGOING)
+//    public List<Similar> similarModules;
 
     @Override
     public Module clone() {
@@ -67,7 +66,7 @@ public class Module implements Cloneable{
             Module clone = (Module) super.clone();
             List<Topic> clonedTopics;
             List<PrerequisiteGroup> clonedPrereqs;
-            List<Similar> clonedSimilarModules;
+//            List<Similar> clonedSimilarModules;
 
             if (topics != null && !topics.isEmpty()) {
                 clonedTopics = topics.stream()
@@ -87,14 +86,14 @@ public class Module implements Cloneable{
             }
             clone.setPrerequisites(clonedPrereqs);
 
-            if (similarModules != null && !similarModules.isEmpty()) {
-                clonedSimilarModules = similarModules.stream()
-                        .map(Similar::clone)
-                        .toList();
-            } else {
-                clonedSimilarModules = new ArrayList<>();
-            }
-            clone.setSimilarModules(clonedSimilarModules);
+//            if (similarModules != null && !similarModules.isEmpty()) {
+//                clonedSimilarModules = similarModules.stream()
+//                        .map(Similar::clone)
+//                        .toList();
+//            } else {
+//                clonedSimilarModules = new ArrayList<>();
+//            }
+//            clone.setSimilarModules(clonedSimilarModules);
 
             return clone;
         } catch (CloneNotSupportedException e) {

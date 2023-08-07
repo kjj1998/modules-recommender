@@ -1,4 +1,4 @@
-package com.project.modulesRecommender.module;
+package com.project.modulesRecommender.module.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +13,7 @@ import java.util.HashMap;
 @Builder
 @AllArgsConstructor
 @Component
-public class ModuleSearchResult implements NonDomainResult{
+public class ModuleSearchResult implements moduleSearchInterface {
     private final Neo4jClient neo4jClient;
 
     @Override
@@ -51,5 +51,10 @@ public class ModuleSearchResult implements NonDomainResult{
                             .build();
                 }))
                 .all();
+    }
+
+    @Override
+    public Collection<SearchResult> recommendModules(String studentId) {
+        return null;
     }
 }

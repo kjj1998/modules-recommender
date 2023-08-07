@@ -1,7 +1,7 @@
 package com.project.modulesRecommender.recommendation;
 
 import com.project.modulesRecommender.errors.HttpResponse;
-import com.project.modulesRecommender.module.Module;
+import com.project.modulesRecommender.recommendation.models.moduleRecInterface;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import java.util.Collection;
 
 @RestController
 @RequestMapping("/api/v1/recommendation")
@@ -28,7 +28,7 @@ public class RecommendationController {
      */
     @GetMapping("/{studentId}")
     ResponseEntity<HttpResponse> getRecommendations(@PathVariable String studentId) {
-        List<Module> recommendedModules = recommendationService.recommendModules(studentId);
+        Collection<moduleRecInterface.Recommendation> recommendedModules = recommendationService.recommendModules(studentId);
 
         return new ResponseEntity<>(
                 new HttpResponse(

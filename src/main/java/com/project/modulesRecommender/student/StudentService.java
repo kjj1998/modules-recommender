@@ -2,7 +2,7 @@ package com.project.modulesRecommender.student;
 
 import com.project.modulesRecommender.exceptions.CustomErrorException;
 import com.project.modulesRecommender.models.PrerequisiteGroup;
-import com.project.modulesRecommender.module.Module;
+import com.project.modulesRecommender.module.models.Module;
 import com.project.modulesRecommender.student.models.Student;
 import com.project.modulesRecommender.repositories.ModuleRepository;
 import com.project.modulesRecommender.repositories.StudentRepository;

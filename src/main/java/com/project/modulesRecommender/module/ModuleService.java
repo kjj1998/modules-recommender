@@ -1,7 +1,9 @@
 package com.project.modulesRecommender.module;
 
 import com.project.modulesRecommender.exceptions.CustomErrorException;
-import com.project.modulesRecommender.module.NonDomainResult.SearchResult;
+import com.project.modulesRecommender.module.models.moduleSearchInterface;
+import com.project.modulesRecommender.module.models.moduleSearchInterface.SearchResult;
+import com.project.modulesRecommender.module.models.Module;
 import com.project.modulesRecommender.repositories.ModuleRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -11,11 +13,11 @@ import java.util.*;
 @Service
 public class ModuleService {
     private final ModuleRepository moduleRepository;
-    private final NonDomainResult nonDomainResult;
+    private final moduleSearchInterface moduleSearchInterface;
 
-    public ModuleService(ModuleRepository moduleRepository, NonDomainResult nonDomainResult) {
+    public ModuleService(ModuleRepository moduleRepository, moduleSearchInterface moduleSearchInterface) {
         this.moduleRepository = moduleRepository;
-        this.nonDomainResult = nonDomainResult;
+        this.moduleSearchInterface = moduleSearchInterface;
     }
 
     public Module retrieveModule(String courseCode) {
@@ -33,6 +35,8 @@ public class ModuleService {
     public List<Module> retrieveModules(List<String> courseCodes) {
         List<Module> modulesRetrieved = new ArrayList<>();
 
+
+
         for (String courseCode : courseCodes) {
             Optional<Module> module = moduleRepository.findById(courseCode);
             module.ifPresent(modulesRetrieved::add);
@@ -49,7 +53,7 @@ public class ModuleService {
 
     public Collection<SearchResult> searchModules(String searchTerm, Integer skip, Integer limit) {
 
-        Collection<SearchResult> results = nonDomainResult.searchForModules(searchTerm, skip == null ? 0 : skip, limit);
+        Collection<SearchResult> results = moduleSearchInterface.searchForModules(searchTerm, skip == null ? 0 : skip, limit);
 
         return results;
     }

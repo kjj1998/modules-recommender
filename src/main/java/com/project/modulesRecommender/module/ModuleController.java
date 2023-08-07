@@ -1,6 +1,8 @@
 package com.project.modulesRecommender.module;
 
 import com.project.modulesRecommender.errors.HttpResponse;
+import com.project.modulesRecommender.module.models.Module;
+import com.project.modulesRecommender.module.models.moduleSearchInterface;
 import com.project.modulesRecommender.repositories.ModuleRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,7 +64,7 @@ public class ModuleController {
 
     @GetMapping("/search/{searchTerm}/{skip}/{limit}")
     ResponseEntity<HttpResponse> searchForModules(@PathVariable String searchTerm, @PathVariable Integer skip, @PathVariable Integer limit) {
-        Collection<NonDomainResult.SearchResult> modulesRetrieved = moduleService.searchModules(searchTerm, skip, limit);
+        Collection<moduleSearchInterface.SearchResult> modulesRetrieved = moduleService.searchModules(searchTerm, skip, limit);
 
         return new ResponseEntity<>(
                 new HttpResponse(
