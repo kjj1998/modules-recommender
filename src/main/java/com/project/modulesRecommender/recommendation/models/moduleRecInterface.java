@@ -1,5 +1,6 @@
 package com.project.modulesRecommender.recommendation.models;
 
+import com.project.modulesRecommender.module.models.ModuleRead;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,5 +22,5 @@ public interface moduleRecInterface {
     }
 
     @Transactional(readOnly = true)
-    Collection<Recommendation> recommendModules(String studentId);
+    Collection<ModuleRead> recommendModules(String studentId);
 }

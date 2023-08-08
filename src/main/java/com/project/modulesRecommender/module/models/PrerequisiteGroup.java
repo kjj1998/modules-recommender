@@ -1,8 +1,7 @@
-package com.project.modulesRecommender.models;
+package com.project.modulesRecommender.module.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.project.modulesRecommender.module.models.Module;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,7 +29,7 @@ public class PrerequisiteGroup implements Cloneable {
             "topics", "prerequisites", "academicUnits", "broadeningAndDeepeningElective", "community",
             "courseInformation", "courseName", "faculty","gradeType"})
     @Relationship(type = "INSIDE", direction = Relationship.Direction.INCOMING)
-    private List<Module> modules = new ArrayList<>();
+    private List<Module> modules;
 
     @Override
     public PrerequisiteGroup clone() {

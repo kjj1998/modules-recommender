@@ -2,8 +2,6 @@ package com.project.modulesRecommender.module.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.project.modulesRecommender.models.PrerequisiteGroup;
-import com.project.modulesRecommender.models.Topic;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,14 +27,14 @@ public class Module implements Cloneable{
     @Property("academic_units")
     public Integer academicUnits;
 
-    @Property("bde")
+    @Property("broadening_and_deepening")
     public Boolean broadeningAndDeepeningElective;
 
     @JsonIgnore
     @Property("community")
     public Integer community;
 
-    @Property("course_information")
+    @Property("course_info")
     public String courseInformation;
 
     @Property("course_name")

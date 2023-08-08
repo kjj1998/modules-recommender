@@ -1,4 +1,4 @@
-package com.project.modulesRecommender.models;
+package com.project.modulesRecommender.module.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

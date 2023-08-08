@@ -1,6 +1,7 @@
 package com.project.modulesRecommender.recommendation;
 
 import com.project.modulesRecommender.auth.services.JwtService;
+import com.project.modulesRecommender.module.models.ModuleRead;
 import com.project.modulesRecommender.recommendation.models.moduleRecInterface;
 import com.project.modulesRecommender.repositories.ModuleRepository;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,7 @@ public class RecommendationService {
         this.moduleRecInterface = moduleRecInterface;
     }
 
-    public Collection<com.project.modulesRecommender.recommendation.models.moduleRecInterface.Recommendation> recommendModules(String studentId) {
+    public Collection<ModuleRead> recommendModules(String studentId) {
 
 //        // Get the Authentication object from the SecurityContextHolder
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

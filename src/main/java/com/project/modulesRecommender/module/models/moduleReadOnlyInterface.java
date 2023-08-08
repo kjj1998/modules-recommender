@@ -6,8 +6,9 @@ import lombok.Data;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.List;
 
-public interface moduleSearchInterface {
+public interface moduleReadOnlyInterface {
 
     @Data
     @Builder
@@ -21,9 +22,28 @@ public interface moduleSearchInterface {
         public final Integer total;
     }
 
+    @Data
+    @Builder
+    @AllArgsConstructor
+    class ModuleResult {
+        public final String courseCode;
+        public final String courseName;
+        public final String courseInformation;
+        public final Integer academicUnits;
+        public final Boolean broadeningAndDeepeningElective;
+        public final String faculty;
+        public final String gradeType;
+        public final List<String> topics;
+        public List<List<String>> prerequisites;
+    }
+
+
     @Transactional(readOnly = true)
     Collection<SearchResult> searchForModules(String searchTerm, Integer skip, Integer limit);
 
     @Transactional(readOnly = true)
-    Collection<SearchResult> recommendModules(String studentId);
+    Collection<ModuleRead> retrieveAllModules(int skip, int limit);
+
+    @Transactional(readOnly = true)
+    ModuleRead retrieveModule(String courseCode);
 }

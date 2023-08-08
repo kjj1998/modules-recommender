@@ -1,6 +1,7 @@
 package com.project.modulesRecommender.recommendation;
 
 import com.project.modulesRecommender.errors.HttpResponse;
+import com.project.modulesRecommender.module.models.ModuleRead;
 import com.project.modulesRecommender.recommendation.models.moduleRecInterface;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class RecommendationController {
      */
     @GetMapping("/{studentId}")
     ResponseEntity<HttpResponse> getRecommendations(@PathVariable String studentId) {
-        Collection<moduleRecInterface.Recommendation> recommendedModules = recommendationService.recommendModules(studentId);
+        Collection<ModuleRead> recommendedModules = recommendationService.recommendModules(studentId);
 
         return new ResponseEntity<>(
                 new HttpResponse(
