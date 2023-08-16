@@ -1,9 +1,16 @@
 'use client';
 
-import React from 'react'
+import React, { useState } from 'react'
 import { BiSearch } from 'react-icons/bi';
 
 const Search = () => {
+  const [search, setSearch] = useState('')
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setSearch('')
+  }
+
   return (
     // Overall box containing search elements
     <div 
