@@ -1,28 +1,45 @@
 import React from 'react'
-import Search from './components/Search'
-import Item from './components/Item'
-import { getModules } from '../../lib/getModulesData'
+import { getModules } from '../../../lib/getModulesData'
+import Search from '../components/Search'
+import Item from '../components/Item'
 import Link from 'next/link'
 
 type Props = {
   params: {
-    skip: number,
+    page: string,
   }
 }
 
-export default async function Modules() {
+export default async function page({ params: { page } }: Props) {
+  let pageNum = parseInt(page)
 
-  const modules = await getModules(0, 10)
+  const modules = await getModules((pageNum - 1) * 10, 10)
+  
   const totalNumOfModules = modules?.at(0)?.total ?? 0
   const totalNumOfPages = Math.floor(totalNumOfModules / 10) + (totalNumOfModules % 10)
 
   const pageNumbers = [];
 
-  for (let i = 1; i <= totalNumOfPages; i++) {
-    if (i > 10) 
-      break
-    pageNumbers.push(i);
+  if (pageNum > 5) {
+    for (let i = 1; i <= 4; i++) {
+      pageNumbers.push(pageNum - i);
+      pageNumbers.push(pageNum + i);
+    }
+  
+    pageNumbers.push(pageNum)
+    pageNumbers.sort((a, b) => a - b);
+
+  } else {
+    for (let i = 1; i <= 9; i++) {
+      pageNumbers.push(i);
+    }
   }
+  
+  // for (let i = 1; i <= totalNumOfPages; i++) {
+  //   if (i > 10) 
+  //     break
+  //   pageNumbers.push(i);
+  // }
 
   return (
     <main className="mx-auto max-w-5xl py-1 min-h-screen mt-16">
@@ -36,15 +53,15 @@ export default async function Modules() {
       <nav>
         <ul className='flex mb-4 justify-center items-center'>
           {
-            pageNumbers.map((pageNum) => {
+            pageNumbers.map((pageNumber) => {
               return (
-                pageNum === 1 ?
-                <li key={pageNum} className=' font-semibold px-2.5 py-1.5 mx-1 rounded-lg bg-cyan-400 text-slate-100'>
-                  {pageNum}
+                pageNumber == pageNum ?
+                <li key={pageNumber} className=' font-semibold px-2.5 py-1.5 mx-1 rounded-lg bg-cyan-400 text-slate-100'>
+                  {pageNumber}
                 </li>
                 :
-                <li key={pageNum} className='font-semibold p-1.5 mx-1'>
-                  <Link href={`/modules/${pageNum}`}>{pageNum}</Link>
+                <li key={pageNumber} className='font-semibold p-1.5 mx-1'>
+                  <Link href={`/modules/${pageNumber}`}>{pageNumber}</Link>
                 </li>
               )
             })
