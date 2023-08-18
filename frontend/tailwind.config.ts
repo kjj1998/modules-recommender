@@ -17,7 +17,11 @@ const config: Config = {
         '112': '28rem',
         '128': '32rem',
         '160': '40rem'
-      }
+      },
+      colors: {
+        'just-blue': '#0000ff',
+        'neon-blue': '#1f51ff'
+      },
     },
   },
   plugins: [],

@@ -15,13 +15,21 @@ type Module = {
   gradeType: string,
   score: number,
   total: number,
-  prerequisites: string[]
+  prerequisites: string[][]
 }
 
-type ApiResponse = {
+type ApiResponseModules = {
   timestamp: Date,
   httpCode: number,
   status: string,
   message: string,
   data: Module[]
+}
+
+type ApiResponseModule = {
+  timestamp: Date,
+  httpCode: number,
+  status: string,
+  message: string,
+  data: Module
 }

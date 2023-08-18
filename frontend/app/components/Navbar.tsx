@@ -21,7 +21,7 @@ export default function Navbar() {
               <nav className='leading-6 font-bold text-slate-700'>
                 <ul className='flex space-x-8'>
                   <li>
-                    <Link href="/modules">Modules</Link>
+                    <Link href="/modules/1">Modules</Link>
                   </li>
                   <li>
                     <Link href='#'>Recommendations</Link>
