@@ -5,7 +5,7 @@ type Meta = {
   tags: string[]
 }
 
-type Module = {
+type Course = {
   courseCode: string,
   courseName: string,
   courseInformation: string,
@@ -18,18 +18,18 @@ type Module = {
   prerequisites: string[][]
 }
 
-type ApiResponseModules = {
+type ApiResponseCourses = {
   timestamp: Date,
   httpCode: number,
   status: string,
   message: string,
-  data: Module[]
+  data: Course[]
 }
 
-type ApiResponseModule = {
+type ApiResponseCourse = {
   timestamp: Date,
   httpCode: number,
   status: string,
   message: string,
-  data: Module
+  data: Course
 }
