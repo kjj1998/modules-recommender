@@ -7,21 +7,15 @@ const Search = ({ getSearchTerm } : any) => {
   const [searchTerm, setSearchTerm] = useState('')
   const router = useRouter();
 
-  const onChange = async (e: { target: { value: React.SetStateAction<string>; }; }) => {
-    setSearchTerm(e.target.value)
-
-    router.push(`/search/${searchTerm}`)
-
-    getSearchTerm(searchTerm)
-  }
-
   const onSearch = (event: React.FormEvent) => {
     event.preventDefault()
-    
-    const encodedSearchQuery = encodeURI(searchTerm)
-    router.push(`/search/${encodedSearchQuery}`)
 
-    console.log('current search query ', encodedSearchQuery)
+    if (searchTerm === '') {
+      router.push(`/courses/1`)
+    } else {
+      const encodedSearchQuery = encodeURI(searchTerm)
+      router.push(`/search/${encodedSearchQuery}`)
+    }
   }
 
   return (

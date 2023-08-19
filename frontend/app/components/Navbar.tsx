@@ -24,7 +24,7 @@ export default function Navbar() {
                     <Link href="/courses/1">Modules</Link>
                   </li>
                   <li>
-                    <Link href='#'>Recommendations</Link>
+                    <Link href='/recommendations'>Recommendations</Link>
                   </li>
                   <li>
                     <Link href='#'>Profile</Link>

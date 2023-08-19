@@ -29,3 +29,11 @@ export async function searchCourses(searchTerm: string): Promise<Course[] | unde
 
   return courses
 }
+
+export async function getCourseRecommendations(userId: string): Promise<Course[] | undefined> {
+  const response = await fetch(`http://localhost:8081/api/v1/recommendation/${userId}`)
+  const apiResponseCourses : ApiResponseCourses = await response.json()
+  const courses : Course[] = apiResponseCourses.data
+
+  return courses
+}
