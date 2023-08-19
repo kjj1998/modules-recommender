@@ -13,7 +13,7 @@ public interface moduleReadOnlyInterface {
     @Data
     @Builder
     @AllArgsConstructor
-    class SearchResult {
+    class ModuleRead {
         public final String courseCode;
         public final String courseName;
         public final String courseInformation;
@@ -39,11 +39,11 @@ public interface moduleReadOnlyInterface {
 
 
     @Transactional(readOnly = true)
-    Collection<SearchResult> searchForModules(String searchTerm, Integer skip, Integer limit);
+    Collection<com.project.modulesRecommender.module.models.ModuleRead> searchForModules(String searchTerm, Integer skip, Integer limit);
 
     @Transactional(readOnly = true)
-    Collection<ModuleRead> retrieveAllModules(int skip, int limit);
+    Collection<com.project.modulesRecommender.module.models.ModuleRead> retrieveAllModules(int skip, int limit);
 
     @Transactional(readOnly = true)
-    ModuleRead retrieveModule(String courseCode);
+    com.project.modulesRecommender.module.models.ModuleRead retrieveModule(String courseCode);
 }

@@ -2,8 +2,7 @@ package com.project.modulesRecommender.module;
 
 import com.project.modulesRecommender.errors.HttpResponse;
 import com.project.modulesRecommender.module.models.Module;
-import com.project.modulesRecommender.module.models.ModuleRead;
-import com.project.modulesRecommender.module.models.moduleReadOnlyInterface.SearchResult;
+import com.project.modulesRecommender.module.models.moduleReadOnlyInterface.ModuleRead;
 import com.project.modulesRecommender.repositories.ModuleRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +30,7 @@ public class ModuleController {
      */
     @GetMapping("/{courseCode}")
     ResponseEntity<HttpResponse> byCourseCode(@PathVariable String courseCode) {
-        ModuleRead module = moduleService.retrieveModule(courseCode);
+        com.project.modulesRecommender.module.models.ModuleRead module = moduleService.retrieveModule(courseCode);
 
         return new ResponseEntity<>(
                 new HttpResponse(
@@ -45,13 +44,14 @@ public class ModuleController {
 
     @GetMapping("/{skip}/{limit}")
     ResponseEntity<HttpResponse> retrieveAllModules(@PathVariable Integer skip, @PathVariable Integer limit) {
-        Collection<ModuleRead> allModulesPaginated = moduleService.retrieveAllModules(skip, limit);
+        Collection<com.project.modulesRecommender.module.models.ModuleRead> allModulesPaginated = moduleService.retrieveAllModules(skip, limit);
 
         return new ResponseEntity<>(
                 new HttpResponse(
                         HttpStatus.OK,
                         "Skipped " + skip + " modules, retrieved " + limit + " modules.",
-                        allModulesPaginated
+                        allModulesPaginated,
+                        allModulesPaginated.size()
                 ),
                 HttpStatus.OK
         );
@@ -79,7 +79,7 @@ public class ModuleController {
 
     @GetMapping("/search/{searchTerm}/{skip}/{limit}")
     ResponseEntity<HttpResponse> searchForModules(@PathVariable String searchTerm, @PathVariable Integer skip, @PathVariable Integer limit) {
-        Collection<SearchResult> modulesRetrieved = moduleService.searchModules(searchTerm, skip, limit);
+        Collection<com.project.modulesRecommender.module.models.ModuleRead> modulesRetrieved = moduleService.searchModules(searchTerm, skip, limit);
 
         return new ResponseEntity<>(
                 new HttpResponse(

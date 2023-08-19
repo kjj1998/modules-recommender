@@ -19,6 +19,9 @@ public class HttpResponse {
     @JsonProperty("data")
     private Object data;
 
+    @JsonProperty("total")
+    private int total;
+
     public HttpResponse() {
         this.timestamp = new Date();
     }
@@ -35,5 +38,11 @@ public class HttpResponse {
         this(httpStatus, message);
 
         this.data = data;
+    }
+
+    public HttpResponse(HttpStatus httpStatus, String message, Object data, int total) {
+        this(httpStatus, message, data);
+
+        this.total = total;
     }
 }

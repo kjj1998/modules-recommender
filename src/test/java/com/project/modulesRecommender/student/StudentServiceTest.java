@@ -1,26 +1,22 @@
 package com.project.modulesRecommender.student;
 
-import com.project.modulesRecommender.models.PrerequisiteGroup;
-import com.project.modulesRecommender.module.Module;
+import com.project.modulesRecommender.module.models.PrerequisiteGroup;
+import com.project.modulesRecommender.module.models.Module;
 import com.project.modulesRecommender.repositories.ModuleRepository;
 import com.project.modulesRecommender.repositories.StudentRepository;
 import com.project.modulesRecommender.student.models.Student;
 import com.project.modulesRecommender.student.models.StudentDTO;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;

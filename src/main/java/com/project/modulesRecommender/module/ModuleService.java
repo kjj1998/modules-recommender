@@ -2,9 +2,8 @@ package com.project.modulesRecommender.module;
 
 import com.project.modulesRecommender.exceptions.CustomErrorException;
 import com.project.modulesRecommender.module.models.Module;
-import com.project.modulesRecommender.module.models.ModuleRead;
 import com.project.modulesRecommender.module.models.moduleReadOnlyInterface;
-import com.project.modulesRecommender.module.models.moduleReadOnlyInterface.SearchResult;
+import com.project.modulesRecommender.module.models.moduleReadOnlyInterface.ModuleRead;
 import com.project.modulesRecommender.repositories.ModuleRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -22,7 +21,7 @@ public class ModuleService {
         this.moduleReadOnlyInterface = moduleReadOnlyInterface;
     }
 
-    public ModuleRead retrieveModule(String courseCode) {
+    public com.project.modulesRecommender.module.models.ModuleRead retrieveModule(String courseCode) {
         boolean moduleExists = moduleRepository.existsById(courseCode);
 
         if (!moduleExists) {
@@ -46,11 +45,11 @@ public class ModuleService {
         return modulesRetrieved;
     }
 
-    public Collection<ModuleRead> retrieveAllModules(int skip, int limit) {
+    public Collection<com.project.modulesRecommender.module.models.ModuleRead> retrieveAllModules(int skip, int limit) {
         return moduleReadOnlyInterface.retrieveAllModules(skip, limit);
     }
 
-    public Collection<SearchResult> searchModules(String searchTerm, Integer skip, Integer limit) {
+    public Collection<com.project.modulesRecommender.module.models.ModuleRead> searchModules(String searchTerm, Integer skip, Integer limit) {
         return moduleReadOnlyInterface.searchForModules(searchTerm, skip == null ? 0 : skip, limit);
     }
 }
