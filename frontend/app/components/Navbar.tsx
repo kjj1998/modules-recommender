@@ -27,17 +27,23 @@ export default function Navbar() {
                     <Link href='/recommendations'>Recommendations</Link>
                   </li>
                   <li>
-                    <Link href='#'>Profile</Link>
+                    <Link href='/profile'>Profile</Link>
                   </li>
                   <li>
                     <Link href='#'>Settings</Link>
+                  </li>
+                  <li>
+                    <Link href='/login'>Sign In</Link>
+                  </li>
+                  <li>
+                    <Link href='/register'>Sign Up</Link>
                   </li>
                   <li>
                     <Link href='#'>About</Link>
                   </li>
                 </ul>
               </nav>
-              <div className='flex items-center border-l border-slate-400 ml-6 pl-6'>
+              {/* <div className='flex items-center border-l border-slate-400 ml-6 pl-6'>
                   <Image
                     src='/images/placeholder.jpg'
                     width={20}
@@ -45,7 +51,7 @@ export default function Navbar() {
                     alt = "Logo of student2modules"
                     className='border-b-slate-300 border-b rounded-full'
                   />
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

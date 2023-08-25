@@ -5,6 +5,10 @@ type Meta = {
   tags: string[]
 }
 
+type Token = {
+  token: string
+}
+
 type Course = {
   courseCode: string,
   courseName: string,
@@ -32,4 +36,12 @@ type ApiResponseCourse = {
   status: string,
   message: string,
   data: Course
+}
+
+type ApiResponseJWT = {
+  timestamp: Date,
+  http_code: number,
+  status: string,
+  message: string,
+  data: Token | null
 }
