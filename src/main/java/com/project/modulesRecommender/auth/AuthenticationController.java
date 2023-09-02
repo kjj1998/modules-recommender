@@ -41,7 +41,7 @@ public class AuthenticationController {
         return new ResponseEntity<>(
                 new HttpResponse(
                         HttpStatus.OK,
-                        "Student with id " + request.getStudentId() + " authenticated.",
+                        "Student with id " + request.getUsername() + " authenticated.",
                         response
                 ),
                 HttpStatus.OK

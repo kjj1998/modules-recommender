@@ -46,4 +46,13 @@ public interface moduleReadOnlyInterface {
 
     @Transactional(readOnly = true)
     com.project.modulesRecommender.module.models.ModuleRead retrieveModule(String courseCode);
+
+    @Transactional(readOnly = true)
+    Collection<String> retrieveAllModuleCourseCodes();
+
+    @Transactional(readOnly = true)
+    Collection<String> retrieveAllFaculties();
+
+    @Transactional(readOnly = true)
+    List<String> retrieveAllModulesForAFaculty(String faculty);
 }

@@ -42,6 +42,21 @@ public class ModuleController {
         );
     }
 
+    @GetMapping("/courseCodes")
+    ResponseEntity<HttpResponse> retrieveAllModuleCourseCodes() {
+
+        var moduleCourseCodes = moduleService.retrieveAllModuleCourseCodes();
+
+        return new ResponseEntity<>(
+                new HttpResponse(
+                        HttpStatus.OK,
+                        "All modules' course codes retrieved.",
+                        moduleCourseCodes
+                ),
+                HttpStatus.OK
+        );
+    }
+
     @GetMapping("/{skip}/{limit}")
     ResponseEntity<HttpResponse> retrieveAllModules(@PathVariable Integer skip, @PathVariable Integer limit) {
         Collection<com.project.modulesRecommender.module.models.ModuleRead> allModulesPaginated = moduleService.retrieveAllModules(skip, limit);
@@ -86,6 +101,34 @@ public class ModuleController {
                         HttpStatus.OK,
                         "Returning search results",
                         modulesRetrieved
+                ),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/faculties")
+    ResponseEntity<HttpResponse> retrieveAllFaculties() {
+       var faculties = moduleService.retrieveAllFaculties();
+
+        return new ResponseEntity<>(
+                new HttpResponse(
+                        HttpStatus.OK,
+                        "Retrieved all faculties",
+                        faculties
+                ),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/faculty/{faculty}")
+    ResponseEntity<HttpResponse> retrieveAllModulesForAFaculty(@PathVariable String faculty) {
+        var modules = moduleService.retrieveAllModulesForAFaculty(faculty);
+
+        return new ResponseEntity<>(
+                new HttpResponse(
+                        HttpStatus.OK,
+                        "Returning all modules for " + faculty + ".",
+                        modules
                 ),
                 HttpStatus.OK
         );

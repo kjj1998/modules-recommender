@@ -6,10 +6,8 @@ import lombok.Data;
 import org.springframework.data.neo4j.core.Neo4jClient;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -151,6 +149,55 @@ public class ModuleReadOnlyImpl implements moduleReadOnlyInterface {
         module.prerequisites = getPrereqGroupsForEachModule(courseCode);
 
         return module;
+    }
+
+    @Override
+    public Collection<String> retrieveAllModuleCourseCodes() {
+
+        return this.neo4jClient
+                .query("MATCH (m:Module) " +
+                        "RETURN m.course_code AS course_code")
+                .fetchAs(String.class)
+                .mappedBy(((typeSystem, record) -> String.valueOf(record.get("course_code")).replaceAll("\"", "")))
+                .all();
+    }
+
+    @Override
+    public Collection<String> retrieveAllFaculties() {
+        return this.neo4jClient
+                .query("MATCH (m:Module) " +
+                        "WITH m.faculty AS faculty " +
+                        "RETURN DISTINCT faculty")
+                .fetchAs(String.class)
+                .mappedBy(((typeSystem, record) -> String.valueOf(record.get("faculty")).replaceAll("\"", "")))
+                .all();
+    }
+
+    @Override
+    public List<String> retrieveAllModulesForAFaculty(String faculty) {
+        StringBuilder sb = new StringBuilder();
+
+        return this.neo4jClient
+                .query("MATCH (m:Module) " +
+                        "WHERE m.faculty = $faculty " +
+                        "RETURN m.course_code AS course_code, m.course_name AS course_name")
+                .bindAll(new HashMap<>() {
+                    {
+                        put("faculty", faculty);
+                    }
+                })
+                .fetchAs(String.class)
+                .mappedBy(((typeSystem, record) -> {
+                    var courseName = String.valueOf(record.get("course_name")).replaceAll("\"", "");
+                    var courseCode = String.valueOf(record.get("course_code")).replaceAll("\"", "");
+
+                    sb.setLength(0);
+                    sb.append(courseCode);
+                    sb.append(" ").append(courseName);
+
+                    return sb.toString();
+                }))
+                .all().stream().toList();
     }
 
     private List<List<String>> getPrereqGroupsForEachModule(String courseCode) {

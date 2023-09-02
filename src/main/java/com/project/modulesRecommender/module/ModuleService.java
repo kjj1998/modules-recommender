@@ -45,11 +45,23 @@ public class ModuleService {
         return modulesRetrieved;
     }
 
+    public Collection<String> retrieveAllModuleCourseCodes() {
+        return moduleReadOnlyInterface.retrieveAllModuleCourseCodes();
+    }
+
+    public Collection<String> retrieveAllFaculties() {
+        return moduleReadOnlyInterface.retrieveAllFaculties();
+    }
+
     public Collection<com.project.modulesRecommender.module.models.ModuleRead> retrieveAllModules(int skip, int limit) {
         return moduleReadOnlyInterface.retrieveAllModules(skip, limit);
     }
 
     public Collection<com.project.modulesRecommender.module.models.ModuleRead> searchModules(String searchTerm, Integer skip, Integer limit) {
         return moduleReadOnlyInterface.searchForModules(searchTerm, skip == null ? 0 : skip, limit);
+    }
+
+    public List<String> retrieveAllModulesForAFaculty(String faculty) {
+        return moduleReadOnlyInterface.retrieveAllModulesForAFaculty(faculty);
     }
 }

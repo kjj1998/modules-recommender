@@ -36,10 +36,6 @@ public class AuthenticationService {
         }
 
         var user = Student.builder()
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
-                .major(request.getMajor())
-                .yearOfStudy(request.getYearOfStudy())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.USER)
@@ -51,7 +47,7 @@ public class AuthenticationService {
         var jwtToken = jwtService.generateToken(user);
 
         return AuthenticationResponse.builder()
-                .token(jwtToken)
+                .accessToken(jwtToken)
                 .build();
     }
 
@@ -64,22 +60,28 @@ public class AuthenticationService {
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.getStudentId(),
+                        request.getUsername(),
                         request.getPassword()
                 )
         );
 
-        if (!repository.existsById(request.getStudentId())) {
+
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
+
+
+
+        if (!repository.existsById(request.getUsername())) {
             throw new CustomErrorException(
                     HttpStatus.BAD_REQUEST,
-                    "Student with id " + request.getStudentId() + " does not exist!");
+                    "Student with id " + request.getUsername() + " does not exist!");
         }
 
-        var user = repository.findById(request.getStudentId()).orElseThrow();
+        var user = repository.findById(request.getUsername()).orElseThrow();
 
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
-                .token(jwtToken)
+                .accessToken(jwtToken)
+                .userId(request.getUsername())
                 .build();
     }
 }
