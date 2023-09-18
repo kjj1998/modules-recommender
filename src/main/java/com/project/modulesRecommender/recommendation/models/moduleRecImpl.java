@@ -8,6 +8,7 @@ import org.springframework.data.neo4j.core.Neo4jClient;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 @Data
 @Builder
@@ -18,25 +19,27 @@ public class moduleRecImpl implements moduleRecInterface {
     private final Neo4jClient neo4jClient;
 
     @Override
-    public Collection<ModuleRead> recommendModules(String studentId) {
-//        Collection<ModuleRead> recModulesWithPrereqsFulfilled = getRecommendedModulesThatFulfillPrereqs(studentId);
-//        Collection<ModuleRead> recModulesWithNoPrereqs = getRecommendedModulesWithNoPrereqs(studentId);
-        Collection<ModuleRead> recModulesWithPrereqsFulfilledCf = getRecommendedModulesFromCfThatFulFillPrereqs(studentId);
-//        Collection<ModuleRead> recModulesWithNoPrereqsCF = getRecommendedModulesFromCfWithNoPrereqs(studentId);
+    public RecommendationsDTO recommendModules(String studentId) {
+        Collection<ModuleRead> cbfRecsWithPrereqsFulfilled = getRecommendedModulesFromCbfThatFulfillPrereqs(studentId);
+        Collection<ModuleRead> cbfRecsWithNoPrereqs = getRecommendedModulesFromCbfWithNoPrereqs(studentId);
+        Collection<ModuleRead> cfRecsWithPrereqsFulfilled = getRecommendedModulesFromCfThatFulFillPrereqs(studentId);
+        Collection<ModuleRead> cfRecsWithNoPrereqs = getRecommendedModulesFromCfWithNoPrereqs(studentId);
 
-//        List<ModuleRead> allRecModulesCBF = new ArrayList<>(Stream.concat(
-//                recModulesWithPrereqsFulfilled.stream(), recModulesWithNoPrereqs.stream()).toList());
-//        List<ModuleRead> allRecModulesCf = new ArrayList<>(Stream.concat(
-//                recModulesWithPrereqsFulfilledCF.stream(), recModulesWithNoPrereqsCF.stream()).toList());
-//        allRecModulesCBF.sort(Comparator.comparingDouble(ModuleRead::getScore).reversed());
-//        var top10CbfModules = allRecModulesCBF.stream().limit(10).toList();
-//        List<ModuleRead> mergedRecs = merge(top10CbfModules, allRecModulesCf);
-//
-//        Collections.shuffle(mergedRecs);
+        List<ModuleRead> cbfRecs = new ArrayList<>(
+                Stream.concat(cbfRecsWithPrereqsFulfilled.stream(), cbfRecsWithNoPrereqs.stream()).toList());
+        List<ModuleRead> cfRecs = new ArrayList<>(
+                Stream.concat(cfRecsWithPrereqsFulfilled.stream(), cfRecsWithNoPrereqs.stream()).toList());
 
-//        return mergedRecs;   // Return top 20 module recommendations sorted by score in descending order
+        cbfRecs.sort(Comparator.comparingDouble(ModuleRead::getScore).reversed());
+        var top10CbfModules = cbfRecs.stream().limit(10).toList();
+        var top10CfModules = cfRecs.stream().limit(10).toList();
 
-        return recModulesWithPrereqsFulfilledCf;
+
+
+        return RecommendationsDTO.builder()
+                .cfRecommendations(top10CfModules)
+                .cbfRecommendations(top10CbfModules)
+                .build();
     }
 
     private List<ModuleRead> merge(List<ModuleRead> recModulesCbf, List<ModuleRead> recModulesCf) {
@@ -46,7 +49,7 @@ public class moduleRecImpl implements moduleRecInterface {
         return set.stream().toList();
     }
 
-    private Collection<ModuleRead> getRecommendedModulesWithNoPrereqs(String studentId) {
+    private Collection<ModuleRead> getRecommendedModulesFromCbfWithNoPrereqs(String studentId) {
         return this.neo4jClient
                 .query("MATCH (s:Student)-[t:TAKES]->(m:Module) " +
                         "WHERE s.student_id = $studentId " +
@@ -90,9 +93,10 @@ public class moduleRecImpl implements moduleRecInterface {
                 .all();
     }
 
-    private Collection<ModuleRead> getRecommendedModulesThatFulfillPrereqs(String studentId) {
-        var modules =  this.neo4jClient
-                .query("MATCH (s:Student)-[t:TAKES]->(m:Module) " +
+    private Collection<ModuleRead> getRecommendedModulesFromCbfThatFulfillPrereqs(String studentId) {
+
+        return this.neo4jClient.query(
+                "MATCH (s:Student)-[t:TAKES]->(m:Module) " +
                         "WHERE s.student_id = $studentId " +
                         "MATCH (m)-[sim:SIMILAR]->(rec:Module {community: m.community}) " +
                         "WHERE NOT (rec)<-[:MUTUALLY_EXCLUSIVE]->(m) AND sim.score < 0.9 " +
@@ -130,8 +134,6 @@ public class moduleRecImpl implements moduleRecInterface {
                             .build();
                 }))
                 .all();
-
-        return modules;
     }
 
     private Collection<ModuleRead> getRecommendedModulesFromCfWithNoPrereqs(String studentId) {
@@ -152,6 +154,8 @@ public class moduleRecImpl implements moduleRecInterface {
                         "WHERE coursesNotTaken.discipline <> disciplines AND coursesNotTaken.discipline <> 'Interdisciplinary Collaborative Core' " +
                         "AND coursesNotTaken.discipline <> 'CN Yang Scholars Programme' AND coursesNotTaken.faculty <> 'University Scholars Programme' " +
                         "AND NOT EXISTS { MATCH (coursesNotTaken)<-[:ARE_PREREQUISITES]-(:PrerequisiteGroup)<-[:INSIDE]-(:Module) } " +
+                        "WITH COUNT(DISTINCT coursesNotTakenFiltered.course_code) AS cnt, coursesNotTakenFiltered " +
+                        "ORDER BY cnt DESC " +
                         "WITH DISTINCT coursesNotTakenFiltered " +
                         "RETURN coursesNotTakenFiltered.course_code AS course_code, coursesNotTakenFiltered.course_name AS course_name, " +
                         "coursesNotTakenFiltered.course_info AS course_info, coursesNotTakenFiltered.faculty AS faculty, " +
@@ -205,6 +209,9 @@ public class moduleRecImpl implements moduleRecInterface {
                         "WITH DISTINCT coursesNotTakenFiltered, s1 " +
                         "MATCH (coursesNotTakenFiltered)<-[:ARE_PREREQUISITES]-(prereq_group:PrerequisiteGroup)<-[:INSIDE]-(prereq:Module) " +
                         "MATCH (s1)-[t:TAKES]->(prereq:Module) " +
+                        "WITH COUNT(distinct coursesNotTakenFiltered.course_code) AS cnt, coursesNotTakenFiltered " +
+                        "ORDER BY cnt DESC " +
+                        "WITH DISTINCT coursesNotTakenFiltered " +
                         "RETURN coursesNotTakenFiltered.course_code AS course_code, coursesNotTakenFiltered.course_name AS course_name, " +
                         "coursesNotTakenFiltered.course_info AS course_info, coursesNotTakenFiltered.faculty AS faculty, " +
                         "coursesNotTakenFiltered.academic_units AS academic_units, coursesNotTakenFiltered.grade_type AS grade_type, " +

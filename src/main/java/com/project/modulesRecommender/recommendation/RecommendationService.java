@@ -3,6 +3,7 @@ package com.project.modulesRecommender.recommendation;
 import com.project.modulesRecommender.auth.services.JwtService;
 import com.project.modulesRecommender.exceptions.CustomErrorException;
 import com.project.modulesRecommender.module.models.ModuleRead;
+import com.project.modulesRecommender.recommendation.models.RecommendationsDTO;
 import com.project.modulesRecommender.recommendation.models.moduleRecInterface;
 import com.project.modulesRecommender.repositories.ModuleRepository;
 import org.springframework.http.HttpStatus;
@@ -24,7 +25,7 @@ public class RecommendationService {
         this.moduleRecInterface = moduleRecInterface;
     }
 
-    public Collection<ModuleRead> recommendModules(String studentId) {
+    public RecommendationsDTO recommendModules(String studentId) {
 
         // Get the Authentication object from the SecurityContextHolder
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

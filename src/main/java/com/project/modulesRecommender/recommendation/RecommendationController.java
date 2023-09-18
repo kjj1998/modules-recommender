@@ -2,6 +2,7 @@ package com.project.modulesRecommender.recommendation;
 
 import com.project.modulesRecommender.errors.HttpResponse;
 import com.project.modulesRecommender.module.models.ModuleRead;
+import com.project.modulesRecommender.recommendation.models.RecommendationsDTO;
 import com.project.modulesRecommender.recommendation.models.moduleRecInterface;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,12 +30,15 @@ public class RecommendationController {
      */
     @GetMapping("/{studentId}")
     ResponseEntity<HttpResponse> getRecommendations(@PathVariable String studentId) {
-        Collection<ModuleRead> recommendedModules = recommendationService.recommendModules(studentId);
+        RecommendationsDTO recommendedModules = recommendationService.recommendModules(studentId);
+        var numOfCfModules = recommendedModules.cfRecommendations.size();
+        var numOfCbfModules = recommendedModules.cbfRecommendations.size();
 
         return new ResponseEntity<>(
                 new HttpResponse(
                         HttpStatus.OK,
-                        recommendedModules.size() + " recommended modules",
+                        numOfCfModules + " modules recommended by collaborative filtering, " +
+                                numOfCfModules + " modules recommended by content-based filtering",
                         recommendedModules
                 ),
                 HttpStatus.OK

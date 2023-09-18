@@ -22,5 +22,5 @@ public interface moduleRecInterface {
     }
 
     @Transactional(readOnly = true)
-    Collection<ModuleRead> recommendModules(String studentId);
+    RecommendationsDTO recommendModules(String studentId);
 }
