@@ -74,6 +74,7 @@ public class StudentService {
         retrievedStudent.setYearOfStudy(studentDTO.getYearOfStudy());
         retrievedStudent.setEmail(studentDTO.getEmail());
         retrievedStudent.setModules(studentDtoModules);
+        retrievedStudent.setDisciplines(studentDTO.getDisciplines());
 
         Student updatedStudent = studentRepository.save(retrievedStudent);
 
@@ -85,6 +86,7 @@ public class StudentService {
                 .major(updatedStudent.getMajor())
                 .courseCodes(updatedStudent.getCourseCodes())
                 .yearOfStudy(updatedStudent.getYearOfStudy())
+                .disciplines(updatedStudent.getDisciplines())
                 .build();
     }
 
@@ -188,7 +190,7 @@ public class StudentService {
 
             List<String> nextModules = outDegree.get(curCourseCode);
 
-            if (nextModules != null && nextModules.size() > 0) {
+            if (nextModules != null && !nextModules.isEmpty()) {
                 for (String nextModule : nextModules) {
                     List<Set<String>> prereqGroups = inDegree.get(nextModule);
 

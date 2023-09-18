@@ -133,4 +133,18 @@ public class ModuleController {
                 HttpStatus.OK
         );
     }
+
+    @GetMapping("/numberOfModules")
+    ResponseEntity<HttpResponse> getTotalNumOfModules() {
+        var totalNumOfModules = moduleService.getTotalNumOfModules();
+
+        return new ResponseEntity<>(
+                new HttpResponse(
+                        HttpStatus.OK,
+                        "Found " + totalNumOfModules + " modules",
+                        totalNumOfModules
+                ),
+                HttpStatus.OK
+        );
+    }
 }

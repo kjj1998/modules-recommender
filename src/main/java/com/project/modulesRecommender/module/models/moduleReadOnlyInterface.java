@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public interface moduleReadOnlyInterface {
 
@@ -37,6 +38,13 @@ public interface moduleReadOnlyInterface {
         public List<List<String>> prerequisites;
     }
 
+    @Data
+    @Builder
+    @AllArgsConstructor
+    class ModuleCourseCodeAndName {
+        public final String courseCode;
+        public final String courseName;
+    }
 
     @Transactional(readOnly = true)
     Collection<com.project.modulesRecommender.module.models.ModuleRead> searchForModules(String searchTerm, Integer skip, Integer limit);
@@ -54,5 +62,5 @@ public interface moduleReadOnlyInterface {
     Collection<String> retrieveAllFaculties();
 
     @Transactional(readOnly = true)
-    List<String> retrieveAllModulesForAFaculty(String faculty);
+    List<ModuleCourseCodeAndName> retrieveAllModulesForAFaculty(String faculty);
 }

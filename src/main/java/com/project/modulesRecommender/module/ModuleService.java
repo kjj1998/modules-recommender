@@ -61,7 +61,11 @@ public class ModuleService {
         return moduleReadOnlyInterface.searchForModules(searchTerm, skip == null ? 0 : skip, limit);
     }
 
-    public List<String> retrieveAllModulesForAFaculty(String faculty) {
+    public List<com.project.modulesRecommender.module.models.moduleReadOnlyInterface.ModuleCourseCodeAndName> retrieveAllModulesForAFaculty(String faculty) {
         return moduleReadOnlyInterface.retrieveAllModulesForAFaculty(faculty);
+    }
+
+    public Long getTotalNumOfModules() {
+        return moduleRepository.count();
     }
 }

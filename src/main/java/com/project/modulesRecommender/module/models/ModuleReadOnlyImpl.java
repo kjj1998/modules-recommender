@@ -7,7 +7,6 @@ import org.springframework.data.neo4j.core.Neo4jClient;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -174,7 +173,7 @@ public class ModuleReadOnlyImpl implements moduleReadOnlyInterface {
     }
 
     @Override
-    public List<String> retrieveAllModulesForAFaculty(String faculty) {
+    public List<ModuleCourseCodeAndName> retrieveAllModulesForAFaculty(String faculty) {
         StringBuilder sb = new StringBuilder();
 
         return this.neo4jClient
@@ -186,16 +185,15 @@ public class ModuleReadOnlyImpl implements moduleReadOnlyInterface {
                         put("faculty", faculty);
                     }
                 })
-                .fetchAs(String.class)
+                .fetchAs(ModuleCourseCodeAndName.class)
                 .mappedBy(((typeSystem, record) -> {
                     var courseName = String.valueOf(record.get("course_name")).replaceAll("\"", "");
                     var courseCode = String.valueOf(record.get("course_code")).replaceAll("\"", "");
 
-                    sb.setLength(0);
-                    sb.append(courseCode);
-                    sb.append(" ").append(courseName);
-
-                    return sb.toString();
+                    return ModuleCourseCodeAndName.builder()
+                            .courseName(courseName)
+                            .courseCode(courseCode)
+                            .build();
                 }))
                 .all().stream().toList();
     }

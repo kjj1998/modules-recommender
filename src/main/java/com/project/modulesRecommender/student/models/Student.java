@@ -3,14 +3,10 @@ package com.project.modulesRecommender.student.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.project.modulesRecommender.auth.models.Role;
 import com.project.modulesRecommender.module.models.Module;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.data.neo4j.core.schema.Id;
-import org.springframework.data.neo4j.core.schema.Node;
-import org.springframework.data.neo4j.core.schema.Property;
-import org.springframework.data.neo4j.core.schema.Relationship;
+import lombok.*;
+import org.springframework.data.annotation.Version;
+import org.springframework.data.neo4j.core.schema.*;
+import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,6 +21,7 @@ import java.util.List;
 @AllArgsConstructor
 @Node("Student")
 public class Student implements UserDetails {
+    @Version Long version;
     @Id
     @Property("student_id")
     private String studentId;
@@ -45,6 +42,8 @@ public class Student implements UserDetails {
     private List<Module> modules;
     @Property("role")
     private Role role;
+    @Property("disciplines")
+    private List<String> disciplines;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -19,4 +19,5 @@ public class StudentDTO {
     private String lastName;
     private Integer yearOfStudy;
     private List<String> courseCodes;
+    private List<String> disciplines;
 }
