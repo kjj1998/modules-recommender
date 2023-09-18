@@ -8,7 +8,6 @@ import org.springframework.data.neo4j.core.Neo4jClient;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 @Data
 @Builder
@@ -20,28 +19,24 @@ public class moduleRecImpl implements moduleRecInterface {
 
     @Override
     public Collection<ModuleRead> recommendModules(String studentId) {
+//        Collection<ModuleRead> recModulesWithPrereqsFulfilled = getRecommendedModulesThatFulfillPrereqs(studentId);
+//        Collection<ModuleRead> recModulesWithNoPrereqs = getRecommendedModulesWithNoPrereqs(studentId);
+        Collection<ModuleRead> recModulesWithPrereqsFulfilledCf = getRecommendedModulesFromCfThatFulFillPrereqs(studentId);
+//        Collection<ModuleRead> recModulesWithNoPrereqsCF = getRecommendedModulesFromCfWithNoPrereqs(studentId);
 
-        Collection<ModuleRead> recModulesWithPrereqsFulfilled = getRecommendedModulesThatFulfillPrereqs(studentId);
-        Collection<ModuleRead> recModulesWithNoPrereqs = getRecommendedModulesWithNoPrereqs(studentId);
-        Collection<ModuleRead> recModulesWithPrereqsFulfilledCF = getRecommendedModulesFromCFThatFulFillPrereqs(studentId);
-        Collection<ModuleRead> recModulesWithNoPrereqsCF = getRecommendedModulesFromCFWithNoPrereqs(studentId);
-        List<ModuleRead> allRecModulesCBF = new ArrayList<>(
-                Stream.concat(recModulesWithPrereqsFulfilled.stream(), recModulesWithNoPrereqs.stream()).toList()
-        );
-        List<ModuleRead> allRecModulesCf = new ArrayList<>(
-                Stream.concat(recModulesWithPrereqsFulfilledCF.stream(), recModulesWithNoPrereqsCF.stream()).toList()
-        );
+//        List<ModuleRead> allRecModulesCBF = new ArrayList<>(Stream.concat(
+//                recModulesWithPrereqsFulfilled.stream(), recModulesWithNoPrereqs.stream()).toList());
+//        List<ModuleRead> allRecModulesCf = new ArrayList<>(Stream.concat(
+//                recModulesWithPrereqsFulfilledCF.stream(), recModulesWithNoPrereqsCF.stream()).toList());
+//        allRecModulesCBF.sort(Comparator.comparingDouble(ModuleRead::getScore).reversed());
+//        var top10CbfModules = allRecModulesCBF.stream().limit(10).toList();
+//        List<ModuleRead> mergedRecs = merge(top10CbfModules, allRecModulesCf);
+//
+//        Collections.shuffle(mergedRecs);
 
-        allRecModulesCBF.sort(Comparator.comparingDouble(ModuleRead::getScore).reversed());
-        var top10CbfModules = allRecModulesCBF.stream().limit(10).toList();
-        List<ModuleRead> mergedRecs = merge(top10CbfModules, allRecModulesCf);
+//        return mergedRecs;   // Return top 20 module recommendations sorted by score in descending order
 
-        Collections.shuffle(mergedRecs);
-
-        return mergedRecs;   // Return top 20 module recommendations sorted by score in descending order
-
-//        return recModulesWithNoPrereqsCF;
-
+        return recModulesWithPrereqsFulfilledCf;
     }
 
     private List<ModuleRead> merge(List<ModuleRead> recModulesCbf, List<ModuleRead> recModulesCf) {
@@ -139,9 +134,9 @@ public class moduleRecImpl implements moduleRecInterface {
         return modules;
     }
 
-    private Collection<ModuleRead> getRecommendedModulesFromCFWithNoPrereqs(String studentId) {
-        return this.neo4jClient
-                .query("MATCH (s1:Student)-[r:SIMILAR_TO_USER]->(s2:Student) " +
+    private Collection<ModuleRead> getRecommendedModulesFromCfWithNoPrereqs(String studentId) {
+        return this.neo4jClient.query(
+                "MATCH (s1:Student)-[r:SIMILAR_TO_USER]->(s2:Student) " +
                         "WHERE s1.student_id = $studentId " +
                         "WITH s2.student_id AS neighborId, s1, r.jaccard_index AS score " +
                         "ORDER BY score DESC, neighborId " +
@@ -151,13 +146,17 @@ public class moduleRecImpl implements moduleRecInterface {
                         "MATCH (s3:Student)-[:TAKES]->(m:Module) " +
                         "WHERE s3.student_id = neighborId AND NOT (s1)-[:TAKES]->(m) " +
                         "WITH m AS coursesNotTaken, s1 " +
-                        "WHERE coursesNotTaken.faculty <> 'ICC' " +
+                        "UNWIND s1.disciplines AS disciplines " +
+                        "WITH coursesNotTaken, disciplines " +
+                        "MATCH (coursesNotTakenFiltered:Module {course_code: coursesNotTaken.course_code}) " +
+                        "WHERE coursesNotTaken.discipline <> disciplines AND coursesNotTaken.discipline <> 'Interdisciplinary Collaborative Core' " +
+                        "AND coursesNotTaken.discipline <> 'CN Yang Scholars Programme' AND coursesNotTaken.faculty <> 'University Scholars Programme' " +
                         "AND NOT EXISTS { MATCH (coursesNotTaken)<-[:ARE_PREREQUISITES]-(:PrerequisiteGroup)<-[:INSIDE]-(:Module) } " +
-                        "WITH DISTINCT coursesNotTaken " +
-                        "RETURN coursesNotTaken.course_code AS course_code, coursesNotTaken.course_name AS course_name, " +
-                        "coursesNotTaken.course_info AS course_info, coursesNotTaken.faculty AS faculty, " +
-                        "coursesNotTaken.academic_units AS academic_units, coursesNotTaken.grade_type AS grade_type, " +
-                        "coursesNotTaken.broadening_and_deepening AS bde")
+                        "WITH DISTINCT coursesNotTakenFiltered " +
+                        "RETURN coursesNotTakenFiltered.course_code AS course_code, coursesNotTakenFiltered.course_name AS course_name, " +
+                        "coursesNotTakenFiltered.course_info AS course_info, coursesNotTakenFiltered.faculty AS faculty, " +
+                        "coursesNotTakenFiltered.academic_units AS academic_units, coursesNotTakenFiltered.grade_type AS grade_type, " +
+                        "coursesNotTakenFiltered.broadening_and_deepening AS bde")
                 .bindAll(new HashMap<>() {
                     {
                         put("studentId", studentId);
@@ -186,9 +185,9 @@ public class moduleRecImpl implements moduleRecInterface {
                 .all();
     }
 
-    private Collection<ModuleRead> getRecommendedModulesFromCFThatFulFillPrereqs(String studentId) {
-        return this.neo4jClient
-                .query("MATCH (s1:Student)-[r:SIMILAR_TO_USER]->(s2:Student) " +
+    private Collection<ModuleRead> getRecommendedModulesFromCfThatFulFillPrereqs(String studentId) {
+        return this.neo4jClient.query(
+                "MATCH (s1:Student)-[r:SIMILAR_TO_USER]->(s2:Student) " +
                         "WHERE s1.student_id = $studentId " +
                         "WITH s2.student_id AS neighborId, s1, r.jaccard_index AS score " +
                         "ORDER BY score DESC, neighborId " +
@@ -198,14 +197,18 @@ public class moduleRecImpl implements moduleRecInterface {
                         "MATCH (s3:Student)-[:TAKES]->(m:Module) " +
                         "WHERE s3.student_id = neighborId AND NOT (s1)-[:TAKES]->(m) " +
                         "WITH m AS coursesNotTaken, s1 " +
-                        "WHERE coursesNotTaken.faculty <> 'ICC' " +
-                        "WITH DISTINCT coursesNotTaken, s1 " +
-                        "MATCH (coursesNotTaken)<-[:ARE_PREREQUISITES]-(prereq_group:PrerequisiteGroup)<-[:INSIDE]-(prereq:Module) " +
+                        "UNWIND s1.disciplines AS disciplines " +
+                        "WITH coursesNotTaken, disciplines, s1 " +
+                        "MATCH (coursesNotTakenFiltered:Module {course_code: coursesNotTaken.course_code}) " +
+                        "WHERE coursesNotTaken.discipline <> disciplines AND coursesNotTaken.discipline <> 'Interdisciplinary Collaborative Core' " +
+                        "AND coursesNotTaken.discipline <> 'CN Yang Scholars Programme' AND coursesNotTaken.faculty <> 'University Scholars Programme' " +
+                        "WITH DISTINCT coursesNotTakenFiltered, s1 " +
+                        "MATCH (coursesNotTakenFiltered)<-[:ARE_PREREQUISITES]-(prereq_group:PrerequisiteGroup)<-[:INSIDE]-(prereq:Module) " +
                         "MATCH (s1)-[t:TAKES]->(prereq:Module) " +
-                        "RETURN coursesNotTaken.course_code AS course_code, coursesNotTaken.course_name AS course_name, " +
-                        "coursesNotTaken.course_info AS course_info, coursesNotTaken.faculty AS faculty, " +
-                        "coursesNotTaken.academic_units AS academic_units, coursesNotTaken.grade_type AS grade_type, " +
-                        "coursesNotTaken.broadening_and_deepening AS bde")
+                        "RETURN coursesNotTakenFiltered.course_code AS course_code, coursesNotTakenFiltered.course_name AS course_name, " +
+                        "coursesNotTakenFiltered.course_info AS course_info, coursesNotTakenFiltered.faculty AS faculty, " +
+                        "coursesNotTakenFiltered.academic_units AS academic_units, coursesNotTakenFiltered.grade_type AS grade_type, " +
+                        "coursesNotTakenFiltered.broadening_and_deepening AS bde")
                 .bindAll(new HashMap<>() {
                     {
                         put("studentId", studentId);
