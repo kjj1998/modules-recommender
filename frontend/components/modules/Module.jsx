@@ -24,24 +24,41 @@ export default function Module({ course }) {
             {course.broadeningAndDeepening === true ? "Yes" : "No"}
           </p>
         </section>
-        { course.prerequisites && course.prerequisites.length > 0 ? (
-          <section className='mb-4'>
-            <p className='font-bold'>
-              Prerequisite(s) :
-            </p>
-            {course.prerequisites.map((prereqGroup, index) => (
-              <p key={index} className='text-slate-600'>
-                {
-                  prereqGroup.map((prereq) => (
-                    <span key={prereq} >{prereq} </span>
-                  ))
-                }
-                {
-                  index !== course.prerequisites.length - 1 ? <span>OR</span> : <span></span>
-                }
+        {
+          course.mutuallyExclusives && course.mutuallyExclusives.length > 0 ? (
+            <section className='mb-4'>
+              <p className='font-bold'>
+                Mutually Exclusives(s) :
               </p>
-            ))}
-          </section>
+              {course.mutuallyExclusives.map((mutual) => (
+                <p key={mutual} className='text-slate-600'>
+                  {mutual}
+                </p>
+              ))}
+            </section>
+          ) : (
+            <div className='hidden'></div>
+          )
+        }
+        { 
+          course.prerequisites && course.prerequisites.length > 0 ? (
+            <section className='mb-4'>
+              <p className='font-bold'>
+                Prerequisite(s) :
+              </p>
+              {course.prerequisites.map((prereqGroup, index) => (
+                <p key={index} className='text-slate-600'>
+                  {
+                    prereqGroup.map((prereq) => (
+                      <span key={prereq} >{prereq} </span>
+                    ))
+                  }
+                  {
+                    index !== course.prerequisites.length - 1 ? <span>OR</span> : <span></span>
+                  }
+                </p>
+              ))}
+            </section>
           ) : (
             <div className='hidden'></div>
           )

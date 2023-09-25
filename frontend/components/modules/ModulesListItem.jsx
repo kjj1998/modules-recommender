@@ -30,6 +30,22 @@ export default function ModulesListItem({ module }) {
         <p className='text-slate-600'>AB0601, HW0105, HW0106, HW0111, HW0128, HW0188, HW0209</p>
       </section> */}
       {
+        module.mutuallyExclusives && module.mutuallyExclusives.length > 0 ? (
+          <section className='mb-4'>
+            <p className='font-bold'>
+              Mutually Exclusives(s) :
+            </p>
+            {module.mutuallyExclusives.map((mutual) => (
+              <p key={mutual} className='text-slate-600'>
+                {mutual}
+              </p>
+            ))}
+          </section>
+        ) : (
+          <div className='hidden'></div>
+        )
+      }
+      {
         module.prerequisites && module.prerequisites.length > 0 ? (
           <section className='mb-4'>
             <p className='font-bold'>
