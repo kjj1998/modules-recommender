@@ -104,6 +104,7 @@ public class ModuleReadOnlyImpl implements moduleReadOnlyInterface {
 
         for (int i = 0; i < courseCodes.size(); i++) {
             modules.get(i).prerequisites = getPrereqGroupsForEachModule(courseCodes.get(i));
+            modules.get(i).mutuallyExclusives = getMutuallyExclusiveForEachModule(courseCodes.get(i));
         }
 
         return modules;
@@ -146,6 +147,7 @@ public class ModuleReadOnlyImpl implements moduleReadOnlyInterface {
                 .one().get();
 
         module.prerequisites = getPrereqGroupsForEachModule(courseCode);
+        module.mutuallyExclusives = getMutuallyExclusiveForEachModule(courseCode);
 
         return module;
     }
@@ -222,5 +224,22 @@ public class ModuleReadOnlyImpl implements moduleReadOnlyInterface {
             listOfPrereqGroups.add(p);
         });
         return listOfPrereqGroups;
+    }
+
+    private List<String> getMutuallyExclusiveForEachModule(String courseCode) {
+        var mutuallyExclusiveModules = this.neo4jClient
+                .query("MATCH (m:Module)-[:MUTUALLY_EXCLUSIVE]->(mutual:Module) " +
+                        "WHERE m.course_code = $courseCode " +
+                        "RETURN mutual.course_code AS mutualCourseCode")
+                .bindAll(new HashMap<>() {
+                    {
+                        put("courseCode", courseCode);
+                    }
+                })
+                .fetchAs(String.class)
+                .mappedBy(((typeSystem, record) -> String.valueOf(record.get("mutualCourseCode")).replaceAll("\"", "")))
+                .all();
+
+        return mutuallyExclusiveModules.stream().toList();
     }
 }

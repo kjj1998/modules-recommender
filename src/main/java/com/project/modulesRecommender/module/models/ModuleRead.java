@@ -21,6 +21,7 @@ public class ModuleRead {
     public final Integer total;
     public final List<String> topics;
     public List<List<String>> prerequisites;
+    public List<String> mutuallyExclusives;
 
     @Override
     public int hashCode() {
