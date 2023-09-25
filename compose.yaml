@@ -1,0 +1,20 @@
+services:
+  neo4j:
+    image: neo4j:5.11.0-bullseye
+    volumes:
+      - "./neo4j/data:/data"
+      - "./neo4j/logs:/logs"
+      - "./neo4j/plugins:/plugins"
+      - "./neo4j/import:/import"
+    ports:
+      - 127.0.0.1:7687:7687
+      - 127.0.0.1:7474:7474
+    restart: always
+    environment:
+      - NEO4J_AUTH=${NEO4J_USER}/${NEO4J_PASSWORD}
+      - NEO4J_PLUGINS=["apoc", "graph-data-science"]
+#    command:
+#      - neo4j-admin database import full --nodes=Modules=/import/all_modules_with_encodings_header.csv,/import/all_modules_with_encodings.csv
+#    environment:
+#      MYSQL_ROOT_PASSWORD: secret
+#      MYSQL_DATABASE: todos

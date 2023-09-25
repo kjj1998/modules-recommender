@@ -31,9 +31,9 @@ public class moduleRecImpl implements moduleRecInterface {
                 Stream.concat(cfRecsWithPrereqsFulfilled.stream(), cfRecsWithNoPrereqs.stream()).toList());
 
         cbfRecs.sort(Comparator.comparingDouble(ModuleRead::getScore).reversed());
+        Collections.shuffle(cbfRecs);
         var top10CbfModules = cbfRecs.stream().limit(10).toList();
         var top10CfModules = cfRecs.stream().limit(10).toList();
-
 
 
         return RecommendationsDTO.builder()
@@ -59,9 +59,17 @@ public class moduleRecImpl implements moduleRecInterface {
                         "  MATCH (rec)<-[:ARE_PREREQUISITES]-(:PrerequisiteGroup)<-[:INSIDE]-(:Module) " +
                         "}" +
                         "AND rec.broadening_and_deepening = true " +
-                        "RETURN rec.course_code AS course_code, rec.course_name AS course_name, rec.course_info AS course_info, " +
-                        "rec.academic_units AS academic_units, rec.broadening_and_deepening AS bde, rec.faculty AS faculty, " +
-                        "rec.grade_type AS grade_type, sim.score AS score"
+                        "WITH s, rec, sim " +
+                        "ORDER BY sim.score DESC " +
+                        "UNWIND s.disciplines AS disciplines " +
+                        "MATCH (filteredRec: Module { course_code: rec.course_code}) " +
+                        "WHERE filteredRec.discipline <> disciplines AND filteredRec.discipline <> 'Interdisciplinary Collaborative Core' " +
+                        "AND filteredRec.discipline <> 'CN Yang Scholars Programme' AND filteredRec.discipline <> 'University Scholars Programme' " +
+                        "AND filteredRec.discipline <> 'Renaissance Engineering' " +
+                        "RETURN filteredRec.course_code AS course_code, filteredRec.course_name AS course_name, " +
+                        "filteredRec.course_info AS course_info, filteredRec.academic_units AS academic_units, " +
+                        "filteredRec.broadening_and_deepening AS bde, filteredRec.faculty AS faculty, " +
+                        "filteredRec.grade_type AS grade_type, sim.score AS score"
                 )
                 .bindAll(new HashMap<>() {
                     {
@@ -152,7 +160,7 @@ public class moduleRecImpl implements moduleRecInterface {
                         "WITH coursesNotTaken, disciplines " +
                         "MATCH (coursesNotTakenFiltered:Module {course_code: coursesNotTaken.course_code}) " +
                         "WHERE coursesNotTaken.discipline <> disciplines AND coursesNotTaken.discipline <> 'Interdisciplinary Collaborative Core' " +
-                        "AND coursesNotTaken.discipline <> 'CN Yang Scholars Programme' AND coursesNotTaken.faculty <> 'University Scholars Programme' " +
+                        "AND coursesNotTaken.discipline <> 'CN Yang Scholars Programme' AND coursesNotTaken.discipline <> 'University Scholars Programme' " +
                         "AND NOT EXISTS { MATCH (coursesNotTaken)<-[:ARE_PREREQUISITES]-(:PrerequisiteGroup)<-[:INSIDE]-(:Module) } " +
                         "WITH COUNT(DISTINCT coursesNotTakenFiltered.course_code) AS cnt, coursesNotTakenFiltered " +
                         "ORDER BY cnt DESC " +
@@ -205,7 +213,7 @@ public class moduleRecImpl implements moduleRecInterface {
                         "WITH coursesNotTaken, disciplines, s1 " +
                         "MATCH (coursesNotTakenFiltered:Module {course_code: coursesNotTaken.course_code}) " +
                         "WHERE coursesNotTaken.discipline <> disciplines AND coursesNotTaken.discipline <> 'Interdisciplinary Collaborative Core' " +
-                        "AND coursesNotTaken.discipline <> 'CN Yang Scholars Programme' AND coursesNotTaken.faculty <> 'University Scholars Programme' " +
+                        "AND coursesNotTaken.discipline <> 'CN Yang Scholars Programme' AND coursesNotTaken.discipline <> 'University Scholars Programme' " +
                         "WITH DISTINCT coursesNotTakenFiltered, s1 " +
                         "MATCH (coursesNotTakenFiltered)<-[:ARE_PREREQUISITES]-(prereq_group:PrerequisiteGroup)<-[:INSIDE]-(prereq:Module) " +
                         "MATCH (s1)-[t:TAKES]->(prereq:Module) " +

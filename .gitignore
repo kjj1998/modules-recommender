@@ -35,3 +35,8 @@ build/
 
 ### Environment Variables ###
 .env
+
+### Neo4j Docker files ###
+neo4j/data
+neo4j/logs
+neo4j/plugins
