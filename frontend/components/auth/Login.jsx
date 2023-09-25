@@ -16,8 +16,6 @@ export default function Login() {
       password: password
     })
 
-    console.log(result)
-
     if (!result.error) {
       router.replace('/profile')
     }

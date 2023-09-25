@@ -44,9 +44,6 @@ export default function Navbar() {
                     <Link className='hover:text-slate-900 text-slate-600 align-middle' href='/profile'>Profile</Link>
                   </li>
                   <li>
-                    <Link className='hover:text-slate-900 text-slate-600 align-middle' href='#'>Settings</Link>
-                  </li>
-                  <li>
                     <Link className='hover:text-slate-900 text-slate-600 align-middle' href='/about'>About</Link>
                   </li>
                   {!session && status === 'unauthenticated' && (

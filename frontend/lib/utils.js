@@ -1,5 +1,6 @@
 export function paginate(current, max) {
-  if (!current || !max) return null
+  if (!current || !max) 
+    return null
 
   let prev = current === 1 ? null : current - 1,
       next = current === max ? null : current + 1,

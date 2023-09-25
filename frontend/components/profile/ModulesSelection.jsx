@@ -1,8 +1,7 @@
-import React, { useEffect, Fragment, useState } from 'react'
+import React, { useEffect, Fragment } from 'react'
 import ModuleTaken from './ModuleTaken'
 
 export default function ModulesSelection({ faculties, modulesForFaculty, modulesTaken, setModulesTaken, setModulesForFaculty, faculty, setFaculty }) {
-  const [facultyModulesDict, setFacultyModulesDict] = useState({})
 
   useEffect(() => {
     const fetchCourses = async () => { 
