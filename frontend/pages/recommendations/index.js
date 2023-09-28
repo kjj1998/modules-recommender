@@ -29,19 +29,31 @@ export default function RecommendationsPage(props) {
     <main className="mx-auto max-w-5xl py-1 min-h-screen mt-16">
       <div>
         <span className='text-2xl semi-bold'>Recommendations based on modules similar students have taken:</span>
-        <ul className='mt-5'>
-          <li>
-            { cfRecommendations.map((recommendation) => <Recommendation key={recommendation.courseCode} module={recommendation} />) }
-          </li>
-        </ul>
+        {
+          cfRecommendations.length === 0 ? 
+            <div className='my-5'>There are currently no recommendations, please check back later!</div> :
+            (
+              <ul className='mt-5'>
+                <li>
+                  { cfRecommendations.map((recommendation) => <Recommendation key={recommendation.courseCode} module={recommendation} />) }
+                </li>
+              </ul>
+            )
+        }
       </div>
       <div>
         <span className='text-2xl semi-bold'>Recommendations based on the modules you have taken:</span>
-        <ul className='mt-5'>
-          <li>
-            { cbfRecommendations.map((recommendation) => <Recommendation key={recommendation.courseCode} module={recommendation} />) }
-          </li>
-        </ul>
+        {
+          cbfRecommendations.length === 0 ?
+            <div className='my-5'>There are currently no recommendations, please add some modules you have taken!</div> :
+            (
+              <ul className='mt-5'>
+                <li>
+                  { cbfRecommendations.map((recommendation) => <Recommendation key={recommendation.courseCode} module={recommendation} />) }
+                </li>
+              </ul>
+            )
+        }
       </div>
     </main>
   )
