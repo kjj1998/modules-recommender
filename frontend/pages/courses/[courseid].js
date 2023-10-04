@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react'
 import Module from '@/components/modules/Module'
 import Head from 'next/head'
+import { fetchModuleByCourseCode } from '@/lib/fetchModuleData'
 
 function Course(props) {
   let pageHeaderData = (
@@ -29,14 +30,48 @@ function Course(props) {
   )
 }
 
-export async function getStaticProps(context) {
+// Removed static side generation because the backend api has to be online at build time
+
+// export async function getStaticProps(context) {
+//   const { params } = context
+//   const courseId = params.courseid
+
+//   const response = await fetch(`http://localhost:8081/api/v1/modules/${courseId}`)
+
+//   const data = await response.json()
+//   const course = data.data
+
+//   if (!course) {
+//     return { notFound: true}
+//   }
+
+//   return {
+//     props: {
+//       loadedCourse: course,
+//     },
+//     revalidate: 60 * 60,
+//   }
+// }
+
+// export async function getStaticPaths() {
+//   const response = await fetch('http://localhost:8081/api/v1/modules/courseCodes')
+//   const data = await response.json()
+//   const courseCodes = data.data
+
+//   const pathsWithParams = 
+//     courseCodes.map((code) => ({ params: { courseid: code } }))
+
+//   return {
+//     paths: pathsWithParams,
+//     fallback: false
+//   }
+// }
+
+export async function getServerSideProps(context) {
   const { params } = context
   const courseId = params.courseid
 
-  const response = await fetch(`http://localhost:8081/api/v1/modules/${courseId}`)
-
-  const data = await response.json()
-  const course = data.data
+  const course = await fetchModuleByCourseCode(courseId)
 
   if (!course) {
     return { notFound: true}
@@ -45,22 +80,7 @@ export async function getStaticProps(context) {
   return {
     props: {
       loadedCourse: course,
-    },
-    revalidate: 60 * 60,
-  }
-}
-
-export async function getStaticPaths() {
-  const response = await fetch('http://localhost:8081/api/v1/modules/courseCodes')
-  const data = await response.json()
-  const courseCodes = data.data
-
-  const pathsWithParams = 
-    courseCodes.map((code) => ({ params: { courseid: code } }))
-
-  return {
-    paths: pathsWithParams,
-    fallback: false
+    }
   }
 }
 

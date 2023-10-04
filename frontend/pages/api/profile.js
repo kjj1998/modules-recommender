@@ -12,8 +12,6 @@ async function handler(req, res) {
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  console.log(updatedProfile)
-
   const accessToken = decodedSessionToken.accessToken
 
   const response = await fetch(`http://localhost:8081/api/v1/students/update`, {

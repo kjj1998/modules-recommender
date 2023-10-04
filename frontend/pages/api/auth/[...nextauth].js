@@ -9,7 +9,6 @@ export default NextAuth({
   providers: [
     CredentialsProvider({
       async authorize(credentials) {
-        console.log(credentials)
 
         const response = await fetch(`http://localhost:8081/api/v1/auth/authenticate`, {
           method: 'POST',
@@ -19,8 +18,6 @@ export default NextAuth({
 
         const result = await response.json()
         const data = result.data
-
-        console.log(data)
 
         return data
       }

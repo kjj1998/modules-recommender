@@ -4,6 +4,7 @@ import ModulesListItem from '@/components/modules/ModulesListItem'
 import { useRouter } from 'next/router'
 import PaginationNavBar from '@/components/layout/PaginationNavBar'
 import { paginate } from '@/lib/utils'
+import { fetchModules } from '@/lib/fetchModuleData'
 
 function CoursesPage(props) {
   const { loadedModules } = props
@@ -27,15 +28,51 @@ function CoursesPage(props) {
   )
 }
 
-export async function getStaticProps(context) {
+// Removed static site generation because the backend api is not online at build time
+
+// export async function getStaticProps(context) {
+//   const { params } = context
+//   const pagenumber = params.pagenumber
+//   const skip = (pagenumber - 1) * 10
+
+//   const response = await fetch(`http://localhost:8081/api/v1/modules/${skip}/10`)
+//   if (!response.ok) return undefined
+//   const data = await response.json()
+//   const modules = data.data
+
+//   if (!modules) {
+//     return { notFound: true}
+//   }
+
+//   return {
+//     props: {
+//       loadedModules: modules,
+//     },
+//     revalidate: 60 * 60,
+//   }
+// }
+
+// export async function getStaticPaths() {
+//   const response = await fetch('http://localhost:8081/api/v1/modules/numberOfModules')
+//   const data = await response.json()
+//   const numOfModules = data.data
+
+//   const numOfPages = Math.ceil(numOfModules / 10)
+//   let pages = Array.from({length: numOfPages}, (_, i) => i + 1)
+//   const pathsWithParams = pages.map((page) => ({ params: { pagenumber : page.toString() } }))
+
+//   return {
+//     paths: pathsWithParams,
+//     fallback: false
+//   }
+// }
+
+export async function getServerSideProps(context) {
   const { params } = context
   const pagenumber = params.pagenumber
   const skip = (pagenumber - 1) * 10
 
-  const response = await fetch(`http://localhost:8081/api/v1/modules/${skip}/10`)
-  if (!response.ok) return undefined
-  const data = await response.json()
-  const modules = data.data
+  const modules = await fetchModules(skip)
 
   if (!modules) {
     return { notFound: true}
@@ -44,24 +81,10 @@ export async function getStaticProps(context) {
   return {
     props: {
       loadedModules: modules,
-    },
-    revalidate: 60 * 60,
+    }
   }
 }
 
-export async function getStaticPaths() {
-  const response = await fetch('http://localhost:8081/api/v1/modules/numberOfModules')
-  const data = await response.json()
-  const numOfModules = data.data
 
-  const numOfPages = Math.ceil(numOfModules / 10)
-  let pages = Array.from({length: numOfPages}, (_, i) => i + 1)
-  const pathsWithParams = pages.map((page) => ({ params: { pagenumber : page.toString() } }))
-
-  return {
-    paths: pathsWithParams,
-    fallback: false
-  }
-}
 
 export default CoursesPage

@@ -2,11 +2,16 @@ import React from 'react'
 import Link from 'next/link'
 
 export default function Recommendation({ module }) {
+  const words = module.courseName.split(" ")
+  const capitalizedCourseName = words.map((word) => {
+    return word[0].toUpperCase() + word.substring(1).toLowerCase()
+  }).join(" ")
+
   return (
     <div className='mb-10'>
       <h2 className='mb-3 text-xl font-semibold text-blue-600 mt-1 hover:text-blue-800'>
         <Link href={`/courses/${module.courseCode}`}>
-          {module.courseCode} <span className='lowercase'>{module.courseName}</span>
+          {module.courseCode} <span>{capitalizedCourseName}</span>
         </Link>
       </h2>
       <p className='text-slate-600 mb-4'>
