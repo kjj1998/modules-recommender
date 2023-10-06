@@ -35,6 +35,7 @@ build/
 
 ### Environment Variables ###
 .env
+db_password.txt
 
 ### Neo4j Docker files ###
 neo4j/data

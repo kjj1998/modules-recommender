@@ -1,0 +1,64 @@
+version: "3.9"
+services:
+  client-react-nextjs:
+    image: client-react-nextjs
+    build:
+      context: ./frontend
+#      dockerfile: ./frontend/Dockerfile
+    init: true
+    volumes:
+      - type: bind
+        source: ./frontend/
+        target: /app/
+      - type: volume
+        target: /app/node_modules
+    environment:
+      NEXT_PUBLIC_HOST: "api-spring-boot"
+    networks:
+      - frontend
+    ports:
+      - "3000:3000"
+  api-spring-boot:
+    image: spring-boot
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    init: true
+    environment:
+      spring.neo4j.uri: "neo4j://db:7687"
+      spring.neo4j.authentication.username: "neo4j"
+      spring.neo4j.authentication.password: "12345678"
+    networks:
+      - frontend
+      - backend
+    depends_on:
+      - db
+    ports:
+      - "8081:8081"
+  db:
+    image: neo4j:5.11.0-bullseye
+    volumes:
+#      - neo4jdata:/data
+      - "./neo4j/data:/data"
+      - "./neo4j/logs:/logs"
+      - "./neo4j/plugins:/plugins"
+      - "./neo4j/import:/import"
+    ports:
+      - "7687:7687"
+      - "7474:7474"
+    restart: always
+    environment:
+      - NEO4J_AUTH=neo4j/12345678
+      - NEO4J_PLUGINS=["apoc", "graph-data-science"]
+    networks:
+      - backend
+#volumes:
+#  neo4jdata:
+networks:
+  frontend:
+  backend:
+#    command:
+#      - neo4j-admin database import full --nodes=Modules=/import/all_modules_with_encodings_header.csv,/import/all_modules_with_encodings.csv
+#    environment:
+#      MYSQL_ROOT_PASSWORD: secret
+#      MYSQL_DATABASE: todos
