@@ -13,7 +13,7 @@
     "eslint": "8.48.0",
     "eslint-config-next": "13.4.19",
     "flowbite": "^1.8.1",
-    "flowbite-react": "^0.5.0",
+    "flowbite-react": "^0.6.4",
     "jose": "^4.14.4",
     "next": "13.4.19",
     "next-auth": "4.23.1",
@@ -21,7 +21,6 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "sharp": "^0.32.6",
-    "swr": "^2.2.1",
     "tailwindcss": "3.3.3"
   }
 }

@@ -26,7 +26,7 @@ export async function fetchModulesBySearchTerm(term, skip) {
 }
 
 export async function fetchModules(skip) {
-  const response = await fetch(`http://localhost:8081/api/v1/modules/${skip}/10`)
+  const response = await fetch(`http://${process.env.HOST}:8081/api/v1/modules/${skip}/10`)
 
   const data = await response.json()
   const modules = data.data
