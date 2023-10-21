@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Koh"
+  given-names: "Jun Jie"
+  orcid: "https://orcid.org/0000-0000-0000-0000"
+title: "modules2students - A recommender system for university modules based on graph database technologies"
+version: 1.0.0
+date-released: 2023-10-01
+url: "https://github.com/kjj1998/modules2Students"
