@@ -41,3 +41,6 @@ db_password.txt
 neo4j/data
 neo4j/logs
 neo4j/plugins
+
+### ipynb Checkpoints ###
+.ipynb_checkpoints
