@@ -114,11 +114,10 @@ public class ModuleReadOnlyImpl implements moduleReadOnlyInterface {
     @Override
     public com.project.modulesRecommender.module.models.ModuleRead retrieveModule(String courseCode) {
         var module =  this.neo4jClient
-                .query("MATCH (topic:Topic)<-[:CONTAIN]-(m:Module) " +
+                .query("MATCH (m:Module) " +
                         "WHERE m.course_code = $courseCode " +
                         "RETURN m.course_code AS course_code, m.course_info AS course_info, m.broadening_and_deepening AS bde, " +
-                        "m.course_name AS course_name, m.academic_units AS au, m.faculty AS faculty, m.grade_type AS grade_type, " +
-                        "COLLECT(DISTINCT topic.name) AS topics")
+                        "m.course_name AS course_name, m.academic_units AS au, m.faculty AS faculty, m.grade_type AS grade_type ")
                 .bindAll(new HashMap<>() {
                     {
                         put("courseCode", courseCode);

@@ -68,8 +68,6 @@ public class AuthenticationService {
 
         String encodedPassword = passwordEncoder.encode(request.getPassword());
 
-
-
         if (!repository.existsById(request.getUsername())) {
             throw new CustomErrorException(
                     HttpStatus.BAD_REQUEST,

@@ -38,7 +38,7 @@ public class RecommendationController {
                 new HttpResponse(
                         HttpStatus.OK,
                         numOfCfModules + " modules recommended by collaborative filtering, " +
-                                numOfCfModules + " modules recommended by content-based filtering",
+                                numOfCbfModules + " modules recommended by content-based filtering",
                         recommendedModules
                 ),
                 HttpStatus.OK
