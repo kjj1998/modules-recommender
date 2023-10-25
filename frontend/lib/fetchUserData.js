@@ -1,5 +1,6 @@
+
 export async function fetchUserData(userId, accessToken) {
-  const response = await fetch(`http://localhost:8081/api/v1/students/${userId}`, {
+  const response = await fetch(`http://${process.env.NEXT_PUBLIC_HOST}:8081/api/v1/students/${userId}`, {
     headers: { 'Authorization': `Bearer ${accessToken}` }
   })
 
@@ -10,14 +11,14 @@ export async function fetchUserData(userId, accessToken) {
 }
 
 export async function fetchRecommendations(userId, accessToken) {
-  const response = await fetch(`http://localhost:8081/api/v1/recommendation/${userId}`, {
+  const response = await fetch(`http://${process.env.NEXT_PUBLIC_HOST}:8081/api/v1/recommendation/${userId}`, {
     headers: {
       'Authorization': `Bearer ${accessToken}`
     }
   })
 
-  const data = await response.json()
-  const recommendations = data.data
+  const recommendations = await response.json()
+  // const recommendations = data.data
 
   return recommendations
 }

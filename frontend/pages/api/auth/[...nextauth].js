@@ -10,7 +10,7 @@ export default NextAuth({
     CredentialsProvider({
       async authorize(credentials) {
 
-        const response = await fetch(`http://localhost:8081/api/v1/auth/authenticate`, {
+        const response = await fetch(`http://${process.env.NEXT_PUBLIC_HOST}:8081/api/v1/auth/authenticate`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(credentials)

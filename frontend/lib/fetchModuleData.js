@@ -1,5 +1,5 @@
 export async function fetchAllFaculties() {
-  const response = await fetch(`http://localhost:8081/api/v1/modules/faculties`)
+  const response = await fetch(`http://${process.env.NEXT_PUBLIC_HOST}:8081/api/v1/modules/faculties`)
 
   const data = await response.json()
   const faculties = data.data
@@ -8,7 +8,7 @@ export async function fetchAllFaculties() {
 }
 
 export async function fetchAllModulesByFaculties(faculty) {
-  const response = await fetch(`http://localhost:8081/api/v1/modules/faculty/${faculty}`)
+  const response = await fetch(`http://${process.env.NEXT_PUBLIC_HOST}:8081/api/v1/modules/faculty/${faculty}`)
 
   const data = await response.json()
   const modules = data.data
@@ -17,7 +17,7 @@ export async function fetchAllModulesByFaculties(faculty) {
 }
 
 export async function fetchModulesBySearchTerm(term, skip) {
-  const response = await fetch(`http://localhost:8081/api/v1/modules/search/${term}/${skip}/10`)
+  const response = await fetch(`http://${process.env.NEXT_PUBLIC_HOST}:8081/api/v1/modules/search/${term}/${skip}/10`)
 
   const data = await response.json()
   const modules = data.data
@@ -26,7 +26,8 @@ export async function fetchModulesBySearchTerm(term, skip) {
 }
 
 export async function fetchModules(skip) {
-  const response = await fetch(`http://${process.env.HOST}:8081/api/v1/modules/${skip}/10`)
+  // console.log(`${process.env.HOST}`)
+  const response = await fetch(`http://${process.env.NEXT_PUBLIC_HOST}:8081/api/v1/modules/${skip}/10`)
 
   const data = await response.json()
   const modules = data.data
@@ -35,7 +36,7 @@ export async function fetchModules(skip) {
 }
 
 export async function fetchAllModulesCourseCodes() {
-  const response = await fetch(`http://localhost:8081/api/v1/modules/courseCodes`)
+  const response = await fetch(`http://${process.env.NEXT_PUBLIC_HOST}:8081/api/v1/modules/courseCodes`)
 
   const data = await response.json()
   const courseCodes = data.data
@@ -44,7 +45,7 @@ export async function fetchAllModulesCourseCodes() {
 }
 
 export async function fetchModuleByCourseCode(courseCode) {
-  const response = await fetch(`http://localhost:8081/api/v1/modules/${courseCode}`)
+  const response = await fetch(`http://${process.env.NEXT_PUBLIC_HOST}:8081/api/v1/modules/${courseCode}`)
 
   const data = await response.json()
   const course = data.data
@@ -53,7 +54,7 @@ export async function fetchModuleByCourseCode(courseCode) {
 }
 
 export async function fetchNumberOfModules() {
-  const response = await fetch('http://localhost:8081/api/v1/modules/numberOfModules')
+  const response = await fetch(`http://${process.env.NEXT_PUBLIC_HOST}:8081/api/v1/modules/numberOfModules`)
   
   const data = await response.json()
   const numOfModules = data.data

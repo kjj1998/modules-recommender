@@ -1,7 +1,7 @@
 async function handler(req, res) {
   const registrationDetails = req.body
 
-  const response = await fetch(`http://localhost:8081/api/v1/auth/register`, {
+  const response = await fetch(`http://${process.env.NEXT_PUBLIC_HOST}:8081/api/v1/auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(registrationDetails)

@@ -14,7 +14,7 @@ async function handler(req, res) {
 
   const accessToken = decodedSessionToken.accessToken
 
-  const response = await fetch(`http://localhost:8081/api/v1/students/update`, {
+  const response = await fetch(`http://${process.env.NEXT_PUBLIC_HOST}:8081/api/v1/students/update`, {
     method: 'PUT',
     headers: { 
       'Authorization': `Bearer ${accessToken}`, 
