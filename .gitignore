@@ -44,3 +44,6 @@ neo4j/plugins
 
 ### ipynb Checkpoints ###
 .ipynb_checkpoints
+
+### virtual environment ###
+scraping-scripts/env
