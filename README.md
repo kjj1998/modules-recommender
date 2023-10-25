@@ -44,7 +44,7 @@ Install the following programming languages, runtime and software.
 1. Go [here](https://neo4j.com/deployment-center/#desktop) select Windows and download Neo4j Desktop 1.5.9
 2. Execute the installer
 
-### Module Data Collection and Preparation
+## Module Data Collection and Preparation
 
 This section contains instructions on how to collect and prepare the data of NTU's modules data.
 You can skip this section if you are not planning to collect and prepare the data. The required data has
