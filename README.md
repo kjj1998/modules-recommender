@@ -1,4 +1,4 @@
-# modules2students Set Up Guide
+# modules2students
 
 ## Introduction
 
@@ -140,7 +140,39 @@ prerequisites
    SET m.encoded_course_name = [x IN m.encoded_course_name | toFloat(x)]
    ```
 
+### Run the kNN and LPA algorithm to form communities of similar modules
+1. Create a projection on modules' encoded course name and encoded course information
+   ```
+   CALL gds.graph.project( 'neighbors', { Module: { properties: ['encoded_course_name','encoded_course_info'] } }, '*' );
+   ```
+2. Find the 20 nearest modules for each module using the kNN algorithm and represent the similarity as a relationship
+   between modules
+   ```
+   CALL gds.knn.write('neighbors', { writeRelationshipType: 'SIMILAR', writeProperty: 'score', topK: 20, randomSeed: 42, concurrency: 1, sampleRate: 1.0, deltaThreshold: 0.0, nodeProperties: ['encoded_course_name','encoded_course_info'] }) 
+   YIELD nodesCompared, relationshipsWritten
+   ```
+3. Create a projection on the scores from the modules' similarity property
+   ```
+   CALL gds.graph.project( 'communities', 'Module', 'SIMILAR', { relationshipProperties: 'score' } )
+   ```
+4. Create the communities of similar modules using the LPA algorithm
+   ```
+   CALL gds.labelPropagation.write('communities', { writeProperty: 'community' }) 
+   YIELD communityCount, ranIterations, didConverge
+   ```
+5. Drop the projections created previously
+   ```
+   CALL gds.graph.drop('neighbors') YIELD graphName;
+   CALL gds.graph.drop('communities') YIELD graphName;
+   ```
 
+### Create full text index for full text search
+1. Create a full text index on the modules' name, information and module code
+   ```
+   CREATE FULLTEXT INDEX moduleIndex IF NOT EXISTS
+   FOR (n:Module)
+   ON EACH [n.course_name, n.course_information, n.course_code]
+   ```
 
 ## Data Collection and Preparation
 
