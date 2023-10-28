@@ -22,6 +22,7 @@ public class moduleRecImpl implements moduleRecInterface {
     public RecommendationsDTO recommendModules(String studentId) {
         Collection<ModuleRead> cbfRecsWithPrereqsFulfilled = getRecommendedModulesFromCbfThatFulfillPrereqs(studentId);
         Collection<ModuleRead> cbfRecsWithNoPrereqs = getRecommendedModulesFromCbfWithNoPrereqs(studentId);
+
         Collection<ModuleRead> cfRecsWithPrereqsFulfilled = getRecommendedModulesFromCfThatFulFillPrereqs(studentId);
         Collection<ModuleRead> cfRecsWithNoPrereqs = getRecommendedModulesFromCfWithNoPrereqs(studentId);
 
@@ -31,7 +32,7 @@ public class moduleRecImpl implements moduleRecInterface {
                 Stream.concat(cfRecsWithPrereqsFulfilled.stream(), cfRecsWithNoPrereqs.stream()).toList());
 
         cbfRecs.sort(Comparator.comparingDouble(ModuleRead::getScore).reversed());
-        Collections.shuffle(cbfRecs);
+//        Collections.shuffle(cbfRecs);
         var top10CbfModules = cbfRecs.stream().limit(10).toList();
         var top10CfModules = cfRecs.stream().limit(10).toList();
 
@@ -54,7 +55,7 @@ public class moduleRecImpl implements moduleRecInterface {
                 .query("MATCH (s:Student)-[t:TAKES]->(m:Module) " +
                         "WHERE s.student_id = $studentId " +
                         "MATCH (m)-[sim:SIMILAR]->(rec:Module {community: m.community}) " +
-                        "WHERE NOT (rec)<-[:MUTUALLY_EXCLUSIVE]->(m) AND sim.score < 0.9 " +
+                        "WHERE NOT (rec)<-[:MUTUALLY_EXCLUSIVE]->(m) AND sim.score < 0.85 " +
                         "AND NOT EXISTS { " +
                         "  MATCH (rec)<-[:ARE_PREREQUISITES]-(:PrerequisiteGroup)<-[:INSIDE]-(:Module) " +
                         "}" +
@@ -69,7 +70,7 @@ public class moduleRecImpl implements moduleRecInterface {
                         "RETURN filteredRec.course_code AS course_code, filteredRec.course_name AS course_name, " +
                         "filteredRec.course_info AS course_info, filteredRec.academic_units AS academic_units, " +
                         "filteredRec.broadening_and_deepening AS bde, filteredRec.faculty AS faculty, " +
-                        "filteredRec.grade_type AS grade_type, sim.score AS score"
+                        "filteredRec.grade_type AS grade_type, sim.score AS score LIMIT 10"
                 )
                 .bindAll(new HashMap<>() {
                     {
@@ -107,13 +108,13 @@ public class moduleRecImpl implements moduleRecInterface {
                 "MATCH (s:Student)-[t:TAKES]->(m:Module) " +
                         "WHERE s.student_id = $studentId " +
                         "MATCH (m)-[sim:SIMILAR]->(rec:Module {community: m.community}) " +
-                        "WHERE NOT (rec)<-[:MUTUALLY_EXCLUSIVE]->(m) AND sim.score < 0.9 " +
+                        "WHERE NOT (rec)<-[:MUTUALLY_EXCLUSIVE]->(m) AND sim.score < 0.85 " +
                         "MATCH (rec)<-[:ARE_PREREQUISITES]-(prereq_group:PrerequisiteGroup)<-[:INSIDE]-(prereq:Module) " +
                         "MATCH (s:Student)-[t:TAKES]->(prereq:Module) " +
                         "WHERE rec.broadening_and_deepening = true " +
                         "RETURN rec.course_code AS course_code, rec.course_name AS course_name, rec.course_info AS course_info, " +
                         "rec.faculty AS faculty, rec.academic_units AS academic_units, rec.grade_type AS grade_type, " +
-                        "rec.broadening_and_deepening AS bde, sim.score AS score")
+                        "rec.broadening_and_deepening AS bde, sim.score AS score LIMIT 10")
                 .bindAll(new HashMap<>() {
                     {
                         put("studentId", studentId);
