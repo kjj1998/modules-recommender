@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   client-react-nextjs:
-    image: client-react-nextjs
+    image: client-react-nextjs:2
     build:
       context: ./frontend
 #      dockerfile: ./frontend/Dockerfile
@@ -14,12 +14,13 @@ services:
         target: /app/node_modules
     environment:
       NEXT_PUBLIC_HOST: "api-spring-boot"
+#      NEXT_PUBLIC_INTERNAL: "client-react-nextjs"
     networks:
       - frontend
     ports:
       - "3000:3000"
   api-spring-boot:
-    image: spring-boot
+    image: spring-boot:2
     build:
       context: .
       dockerfile: ./Dockerfile
