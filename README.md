@@ -2,17 +2,42 @@
 
 ## Introduction
 
+This is the repository containing the source code for modules2students, a recommender system
+for university modules at the Nanyang Technological University (NTU) built on graph
+database technologies.
+
+## Running Locally
+
 There are two ways to set up modules2students and run it locally.
 
 The first method is the manual setup which involves downloading all software needed manually while the second method
 uses Docker to pull in the necessary images. The following steps have been tested and carried out on a 64-bit Intel Windows PC 
 running Windows 11. 
 
-## Manual Installation
+## Mandatory set up
+
+The following steps must be carried out regardless of using the manual or Docker method
+to run modules2students locally
 
 ### Clone this repo
 
 Please clone this repo to your desired location
+
+### Spring Boot backend
+1. Create a resources directory in `modules2Students/src/main/`
+2. Create an `application.properties` file in the newly-created resources directory
+3. Add the neo4j uri, username, password (set previously) and port in the `application.properties` file
+   ![application properties](screenshots/app_properties.png)
+
+### React/Next.js frontend
+1. In the `frontend` directory, create the `.env` and `.env.local` file
+2. In the `.env.local` file, provide default values for `HOST` and `NEXT_PUBLIC_HOST` as shown
+   ![.env.local file properties](screenshots/env_file.png)
+3. In the `.env` file, set the API for Docker and provide your own value for the `NEXTAUTH_SECRET` as shown
+   ![.env file properties](screenshots/env_properties.png)
+4. Run `npm run dev` to start up the frontend
+
+## Manual Installation
 
 ### Software Dependencies
 
@@ -173,6 +198,21 @@ prerequisites
    FOR (n:Module)
    ON EACH [n.course_name, n.course_information, n.course_code]
    ```
+
+### Running the Neo4j Graph Database
+1. Start up the DBMS set up previously in Neo4j Desktop and open the database
+in Neo4j browser
+
+### Running the Spring Boot backend
+1. Go to `modules2Students/src/main/java/com/project/modulesRecommender/ModulesRecommenderApplication.java`
+and start the application
+2. The API documentation is located [here](http://localhost:8081/swagger-ui/index.html)
+
+### Running the React/Next.js frontend
+1. Change directory into the `frontend` directory
+2. Run `npm install` in the terminal to install all the required packages
+3. Run `npm run dev` in the terminal to start up the frontend
+4. Go to [localhost:3000](http://localhost:3000) to access the frontend
 
 ## Data Collection and Preparation
 
