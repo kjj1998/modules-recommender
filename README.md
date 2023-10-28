@@ -99,7 +99,7 @@ constraint on the module code
 2. Load the `all_modules_with_encodings.csv` file into the database
    ```
    LOAD CSV WITH HEADERS FROM 'file:///all_modules_with_encodings.csv' AS row
-   WITH row['Faculty'] AS faculty, row['BDE'] AS bde, row['Topics'] AS topics, row['Academic Units'] AS academic_units, row['Course Code'] AS course_code, row['Course Information'] AS course_info, row['Encoded Course Name'] AS encoded_course_name, row['Course Name'] AS course_name, row['Grade Type'] AS grade_type, row['Encoded Course Information'] AS encoded_course_info
+   WITH row['Faculty'] AS faculty, row['BDE'] AS bde, row['Topics'] AS topics, row['Academic Units'] AS academic_units, row['Course Code'] AS course_code, row['Course Information'] AS course_info, row['Encoded Course Name'] AS encoded_course_name, row['Course Name'] AS course_name, row['Grade Type'] AS grade_type, row['Encoded Course Information'] AS encoded_course_info, row['Discipline'] AS discipline
    MERGE (m:Module {course_code: course_code })
    SET m.course_name = course_name
    SET m.academic_units = toInteger(trim(academic_units))
@@ -110,6 +110,7 @@ constraint on the module code
    SET m.topics = topics
    SET m.encoded_course_info = encoded_course_info
    SET m.encoded_course_name = encoded_course_name
+   SET m.discipline = discipline
    ```
 3. Load the `mutually_exclusive.csv` file into the database
    ```
