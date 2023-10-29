@@ -4,9 +4,13 @@ import com.project.modulesRecommender.module.models.ModuleRead;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.neo4j.core.Neo4jClient;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -17,6 +21,8 @@ import java.util.stream.Stream;
 public class moduleRecImpl implements moduleRecInterface {
 
     private final Neo4jClient neo4jClient;
+    private static final Logger log = LoggerFactory.getLogger(moduleRecImpl.class);
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
     @Override
     public RecommendationsDTO recommendModules(String studentId) {
@@ -32,7 +38,6 @@ public class moduleRecImpl implements moduleRecInterface {
                 cfRecsWithPrereqsFulfilled.stream(), cfRecsWithNoPrereqs.stream()).toList());
 
         cbfRecs.sort(Comparator.comparingDouble(ModuleRead::getScore).reversed());
-//        Collections.shuffle(cbfRecs);
         var top10CbfModules = cbfRecs.stream().limit(10).toList();
         var top10CfModules = cfRecs.stream().limit(10).toList();
 
@@ -48,6 +53,21 @@ public class moduleRecImpl implements moduleRecInterface {
         set.addAll(recModulesCf);
 
         return set.stream().toList();
+    }
+
+    @Scheduled(fixedRate = 1800000L )   // Repeat every 30 minutes
+    public void buildJaccardIndex() {
+        this.neo4jClient
+                .query("MATCH (s1:Student)-[:TAKES]->(m:Module)<-[:TAKES]-(s2:Student) " +
+                        "WHERE s1 <> s2 AND s1.major = s2.major " +
+                        "WITH s1, s2, COUNT(DISTINCT m) as intersection_count " +
+                        "MATCH (s:Student)-[:TAKES]->(m:Module) " +
+                        "WHERE s in [s1, s2] " +
+                        "WITH s1, s2, intersection_count, COUNT(DISTINCT m) as union_count " +
+                        "WITH s1, s2, intersection_count, union_count, (intersection_count*1.0/union_count) as jaccard_index " +
+                        "MERGE (s1)-[j:SIMILAR_TO_USER { jaccard_index: jaccard_index }]->(s2)"
+                ).run();
+        log.info("Finished building the Jaccard Index at {}", dateFormat.format(new Date()));
     }
 
     private Collection<ModuleRead> getRecommendedModulesFromCbfWithNoPrereqs(String studentId) {

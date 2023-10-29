@@ -1,12 +1,9 @@
 package com.project.modulesRecommender.recommendation.models;
 
-import com.project.modulesRecommender.module.models.ModuleRead;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Collection;
 
 public interface moduleRecInterface {
     @Data
