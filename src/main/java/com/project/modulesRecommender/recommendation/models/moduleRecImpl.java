@@ -26,10 +26,10 @@ public class moduleRecImpl implements moduleRecInterface {
         Collection<ModuleRead> cfRecsWithPrereqsFulfilled = getRecommendedModulesFromCfThatFulFillPrereqs(studentId);
         Collection<ModuleRead> cfRecsWithNoPrereqs = getRecommendedModulesFromCfWithNoPrereqs(studentId);
 
-        List<ModuleRead> cbfRecs = new ArrayList<>(
-                Stream.concat(cbfRecsWithPrereqsFulfilled.stream(), cbfRecsWithNoPrereqs.stream()).toList());
-        List<ModuleRead> cfRecs = new ArrayList<>(
-                Stream.concat(cfRecsWithPrereqsFulfilled.stream(), cfRecsWithNoPrereqs.stream()).toList());
+        List<ModuleRead> cbfRecs = new ArrayList<>(Stream.concat(
+                cbfRecsWithPrereqsFulfilled.stream(), cbfRecsWithNoPrereqs.stream()).toList());
+        List<ModuleRead> cfRecs = new ArrayList<>(Stream.concat(
+                cfRecsWithPrereqsFulfilled.stream(), cfRecsWithNoPrereqs.stream()).toList());
 
         cbfRecs.sort(Comparator.comparingDouble(ModuleRead::getScore).reversed());
 //        Collections.shuffle(cbfRecs);
