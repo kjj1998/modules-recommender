@@ -215,6 +215,143 @@ and start the application
 3. Run `npm run dev` in the terminal to start up the frontend
 4. Go to [localhost:3000](http://localhost:3000) to access the frontend and interact with modules2students
 
+## Docker Setup
+
+### Install software dependencies
+#### Install Windows Subsystem for Linux 2 (WSL2)
+1. Follow the instructions to install WSL2 from [here](https://learn.microsoft.com/en-us/windows/wsl/install#install-wsl-command)
+
+#### Docker Desktop for Windows 4.24.2
+1. Download Docker Desktop for Windows 4.24.2 from [here](https://desktop.docker.com/win/main/amd64/124339/Docker%20Desktop%20Installer.exe)
+2. Execute the installer
+3. Start up Docker Desktop after installation
+4. Check that it is correctly installed by running `docker --version` in a shell application like PowerShell
+
+### Copy necessary files
+1. Copy `all_modules_with_encodings.csv`, `mutually_exclusive.csv` and
+`prerequisite_groups.csv` into `modules2Students/neo4j/import`. 
+These files can be found in `modules2Students/scraping-scripts/scraped-data/`.
+
+### Build and run Docker images
+1. Change directory to the root of the project
+2. Run `docker compose up --build`
+
+### Accessing the Neo4j database running in the container
+
+Go to http://localhost:7474/ and log in with the user id and password.
+user id is 'neo4j' and password is '12345678' as written in the 
+`docker-compose.yml` file.
+
+### Import data into the database
+1. Run the query `CREATE CONSTRAINT UniqueModule FOR (m:Module) REQUIRE m.course_code IS UNIQUE` to create a unique
+   constraint on the module code
+2. Load the `all_modules_with_encodings.csv` file into the database
+   ```
+   LOAD CSV WITH HEADERS FROM 'file:///all_modules_with_encodings.csv' AS row
+   WITH row['Faculty'] AS faculty, row['BDE'] AS bde, row['Topics'] AS topics, row['Academic Units'] AS academic_units, row['Course Code'] AS course_code, row['Course Information'] AS course_info, row['Encoded Course Name'] AS encoded_course_name, row['Course Name'] AS course_name, row['Grade Type'] AS grade_type, row['Encoded Course Information'] AS encoded_course_info, row['Discipline'] AS discipline
+   MERGE (m:Module {course_code: course_code })
+   SET m.course_name = course_name
+   SET m.academic_units = toInteger(trim(academic_units))
+   SET m.faculty = faculty
+   SET m.broadening_and_deepening = toLower(trim(bde)) IN ['1','true','yes']
+   SET m.grade_type = grade_type
+   SET m.course_info = course_info
+   SET m.topics = topics
+   SET m.encoded_course_info = encoded_course_info
+   SET m.encoded_course_name = encoded_course_name
+   SET m.discipline = discipline
+   ```
+3. Load the `mutually_exclusive.csv` file into the database
+   ```
+   LOAD CSV WITH HEADERS FROM 'file:///mutually_exclusive.csv' AS row
+   WITH row['mutually_exclusive'] AS mutually_exclusive, row['course_code'] AS course_code
+   MATCH (source:Module { course_code: course_code })
+   MATCH (target:Module { course_code: mutually_exclusive })
+   MERGE (source)-[r: MUTUALLY_EXCLUSIVE]->(target);
+   ```
+4. Create a unique constraint on the prerequisite group id
+   ```
+   CREATE CONSTRAINT UniquePrerequisiteGroup FOR (p:PrerequisiteGroup) REQUIRE p.group_id IS UNIQUE
+   ```
+5. Load the `prerequisite_groups.csv` file into the database
+   ```
+   LOAD CSV WITH HEADERS FROM 'file:///prerequisite_groups.csv' AS row
+   WITH row['prerequisites'] AS prerequisites, row['course_code'] AS course_code, row['group_id'] AS group_id
+   MERGE (p:PrerequisiteGroup {group_id: group_id })
+   SET p.prerequisites = prerequisites
+   ```
+6. Connect prerequisite groups to their target modules i.e. the modules for which the prerequisite groups contain their
+   prerequisites
+   ```
+   LOAD CSV WITH HEADERS FROM 'file:///prerequisite_groups.csv' AS row
+   WITH row['prerequisites'] AS prerequisites, row['course_code'] AS course_code, row['group_id'] AS group_id
+   MATCH (source: PrerequisiteGroup {group_id: group_id })
+   MATCH (target: Module { course_code: course_code })
+   MERGE (source)-[r: ARE_PREREQUISITES]->(target);
+   ```
+7. Split the prerequisites in each prerequisite group
+   ```
+   MATCH (p:PrerequisiteGroup)
+   SET p.prerequisites = split(coalesce(p.prerequisites,""), "|")
+   ```
+8. Connect each module to their prerequisite groups
+   ```
+   MATCH (p:PrerequisiteGroup)
+   UNWIND p.prerequisites AS prereq
+   WITH p, prereq
+   MATCH (m:Module {course_code: prereq})
+   MERGE (m)-[:INSIDE]->(p)
+   ```
+9. Split each module encoded course information
+   ```
+   MATCH (m:Module) 
+   SET m.encoded_course_info = split(coalesce(m.encoded_course_info,""), "|")
+   SET m.encoded_course_info = [x IN m.encoded_course_info | toFloat(x)]
+   ```
+10. Split each module encoded course name
+   ```
+   MATCH (m:Module) 
+   SET m.encoded_course_name = split(coalesce(m.encoded_course_name,""), "|")
+   SET m.encoded_course_name = [x IN m.encoded_course_name | toFloat(x)]
+   ```
+
+### Run the kNN and LPA algorithm to form communities of similar modules
+1. Create a projection on modules' encoded course name and encoded course information
+   ```
+   CALL gds.graph.project( 'neighbors', { Module: { properties: ['encoded_course_name','encoded_course_info'] } }, '*' );
+   ```
+2. Find the 20 nearest modules for each module using the kNN algorithm and represent the similarity as a relationship
+   between modules
+   ```
+   CALL gds.knn.write('neighbors', { writeRelationshipType: 'SIMILAR', writeProperty: 'score', topK: 20, randomSeed: 42, concurrency: 1, sampleRate: 1.0, deltaThreshold: 0.0, nodeProperties: ['encoded_course_name','encoded_course_info'] }) 
+   YIELD nodesCompared, relationshipsWritten
+   ```
+3. Create a projection on the scores from the modules' similarity property
+   ```
+   CALL gds.graph.project( 'communities', 'Module', 'SIMILAR', { relationshipProperties: 'score' } )
+   ```
+4. Create the communities of similar modules using the LPA algorithm
+   ```
+   CALL gds.labelPropagation.write('communities', { writeProperty: 'community' }) 
+   YIELD communityCount, ranIterations, didConverge
+   ```
+5. Drop the projections created previously
+   ```
+   CALL gds.graph.drop('neighbors') YIELD graphName;
+   CALL gds.graph.drop('communities') YIELD graphName;
+   ```
+
+### Create full text index for full text search
+1. Create a full text index on the modules' name, information and module code
+   ```
+   CREATE FULLTEXT INDEX moduleIndex IF NOT EXISTS
+   FOR (n:Module)
+   ON EACH [n.course_name, n.course_information, n.course_code]
+   ```
+### Run modules2students
+1. Go to [localhost:3000](http://localhost:3000) to access the frontend 
+and interact with modules2students
+
 ## Data Collection and Preparation
 
 This section contains instructions on how to collect and prepare the data of NTU's modules data.
