@@ -40,6 +40,7 @@ public class AuthenticationService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.USER)
                 .studentId(request.getStudentId())
+                .yearOfStudy(1)
                 .build();
 
         repository.save(user);

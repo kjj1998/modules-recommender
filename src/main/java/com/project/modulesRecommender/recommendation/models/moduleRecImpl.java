@@ -55,7 +55,7 @@ public class moduleRecImpl implements moduleRecInterface {
         return set.stream().toList();
     }
 
-    @Scheduled(fixedRate = 1800000L )   // Repeat every 30 minutes
+    @Scheduled(fixedRate = 900000L )   // Repeat every 30 minutes
     public void buildJaccardIndex() {
         this.neo4jClient
                 .query("MATCH (s1:Student)-[:TAKES]->(m:Module)<-[:TAKES]-(s2:Student) " +

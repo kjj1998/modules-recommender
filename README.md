@@ -213,7 +213,7 @@ and start the application
 1. Change directory into the `frontend` directory
 2. Run `npm install` in the terminal to install all the required packages
 3. Run `npm run dev` in the terminal to start up the frontend
-4. Go to [localhost:3000](http://localhost:3000) to access the frontend
+4. Go to [localhost:3000](http://localhost:3000) to access the frontend and interact with modules2students
 
 ## Data Collection and Preparation
 

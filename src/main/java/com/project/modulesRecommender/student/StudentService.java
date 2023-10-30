@@ -123,6 +123,7 @@ public class StudentService {
                 .major(retrievedStudent.getMajor())
                 .courseCodes(retrievedStudent.getCourseCodes())
                 .yearOfStudy(retrievedStudent.getYearOfStudy())
+                .disciplines(retrievedStudent.getDisciplines())
                 .build();
     }
 
